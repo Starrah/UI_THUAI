@@ -10,7 +10,7 @@ namespace GameData.MapElement
          * 污染物成分列表
          * 长度等于污染物总的种类数；对应每种污染物，true为存在，false为不存在
          */
-        public List<bool> Components = new List<bool>();
+        public bool[] Components;
 
         /**
          * 长为2的数组，表示污染源对玩家的可见性
