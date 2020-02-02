@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public class Test : MonoBehaviour
-{
+public class Test : MonoBehaviour {
+    public Animator animator;
+    public Animation Animation;
     // Start is called before the first frame update
-    void Start()
-    {
-        DataParse.parse(File.ReadAllText(@"D:\学校\大学\软院\UI_THUAI\Test.json"));
+    void Start() {
+        Animation.Play("idle");
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
 
     }
 }
