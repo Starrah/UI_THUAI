@@ -10,6 +10,7 @@ namespace GameData
         public int MapHeight;
         public int LandPrice;
         public int MaxRoundNum;
+        public int ActualRoundNum;
         public int[] PollutionComponentProcessPrices;//治理污染成分的治理设备价格
         public int[] DetectorRangePrices;//不同种类检测器的价格
         public int[] ProcessorRangePrices;//不同种类治理器的价格
