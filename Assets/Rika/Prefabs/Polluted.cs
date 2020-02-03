@@ -1,18 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
+using GameData.MapElement;
 
-public class Test : MonoBehaviour {
-    public Animation Animation;
+public class Polluted : MonoBehaviour {
+    public Material Glow;
+    public Material Bottom;
+    public Color[] colors = { Color.black, Color.red, Color.blue };
+
     // Start is called before the first frame update
     void Start() {
-        Animation.Play("in");
-        Animation.PlayQueued("idle");
-
 
     }
-
 
     // Update is called once per frame
     void Update() {
