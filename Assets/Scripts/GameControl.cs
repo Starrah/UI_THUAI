@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using GameData;
 using UnityEngine;
@@ -52,6 +51,7 @@ public class GameControl : MonoBehaviour
             return;
         }
         var turnData = _dataSource.GetTurnData(CurrentTurn);
+        //TODO 播放事件动画（可能的物体实例化和析构）
     }
 
     void changeTurn(int turn)
@@ -59,6 +59,8 @@ public class GameControl : MonoBehaviour
         CurrentTurn = turn;
         _time = 0;
         var turnData = _dataSource.GetTurnData(CurrentTurn);
+        //TODO 播放事件动画（可能的物体实例化和析构）
+        //全图遍历、1.修改可复用对象的状况，2.删除多余对象。3.添加新加入的对象
     }
     // Start is called before the first frame update
     void Start()

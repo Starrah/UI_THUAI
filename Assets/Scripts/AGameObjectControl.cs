@@ -18,7 +18,7 @@ public abstract class AGameObjectControl<T, T2>: MonoBehaviour
 {
     public abstract T2 ModelStatus { get; protected set; }
 
-    public abstract void SetModelStatus(T2 value, bool noAnimation = true);
+    public abstract void SetModelStatus(T2 value, T element, bool noAnimation = true);
 
     public abstract void SyncMapElementStatus(T element);
 }
