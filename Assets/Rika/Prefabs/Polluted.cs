@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameData.MapElement;
 
-public class District : MonoBehaviour {
+public class Polluted : MonoBehaviour {
     public Material Glow;
     public Material Bottom;
     public Color[] colors = { Color.black, Color.red, Color.blue };
