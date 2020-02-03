@@ -16,7 +16,7 @@ namespace GameData
         public int[] ProcessorRangePrices;//不同种类治理器的价格
         public int[] PollutionComponentProcessProfits;//某个污染源被彻底治理时，该污染成分带来的收益
         public int TipsterPrice;
-        public MapElementBase[][] Map;//初始时的地图
+        public MapPlace[][] Map;//初始时的地图
         public int[] Scores;//初始时的分数
         public int[] Moneys;//初始时的金钱
     }

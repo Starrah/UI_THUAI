@@ -4,6 +4,10 @@ namespace GameData.MapElement
 {
     public class PollutionSource: MapElementBase
     {
+        public PollutionSource(MapPlace place) : base(place)
+        {
+        }
+        
         public int Curbed = -1;//-1表示未被治理，0或1表示已被某个玩家治理
         
         /**
@@ -17,6 +21,6 @@ namespace GameData.MapElement
          * 下标0和1分别对应两种建筑物
          */
         public bool[] Visible = new bool[2];
-
+        
     }
 }
