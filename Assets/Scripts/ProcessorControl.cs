@@ -1,7 +1,4 @@
-﻿namespace GameData
+﻿public class ProcessorControl
 {
-    public class ProcessorControl
-    {
         
-    }
 }

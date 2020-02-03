@@ -7,12 +7,15 @@ using UnityEngine.UI;
 
 public class GameControl : MonoBehaviour
 {
+    public static GameControl Instance = null;
+    
     private GameDataSource _dataSource;
     private List<GameObject>[][] _map;
 
-    private float _time = 0;
-    public float timePerTurn = 0.1f;
+    private float _time = 0.0f;
+    public float timePerTurn = 0.5f;
     private int _currentTurn = -1;
+    public int myAi = -1;//我的阵营编号
 
     public int CurrentTurn
     {
@@ -61,6 +64,7 @@ public class GameControl : MonoBehaviour
     void Start()
     {
         _dataSource = new GameDataSource();
+        Instance = GameObject.Find("GameControl").GetComponent<GameControl>();
     }
 
     // Update is called once per frame
