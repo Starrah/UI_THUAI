@@ -33,6 +33,7 @@ public class Scan : MonoBehaviour {
     void Start() {
         material = new Material(GetComponent<MeshRenderer>().material);
         GetComponent<MeshRenderer>().material = material;
+        ScanColor = Color.cyan;
     }
 
     // Update is called once per frame

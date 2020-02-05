@@ -1,4 +1,4 @@
-﻿Shader "Custom/CrossScan"
+﻿Shader "Custom/SquareScan"
 {
     Properties
     {
@@ -70,12 +70,12 @@
             }
             int _Blocked;
             static const float PI=3.1415926535898;
-            static int blocked[5][5]={-1,-1,8,-1,-1,-1,-1,4,-1,-1,2,3,0,1,5,-1,-1,2,-1,-1,-1,-1,6,-1,-1};
+            static int blocked[5][5]={7,0,0,0,8,0,3,0,4,0,0,0,-1,0,0,0,2,0,1,0,6,0,0,0,5};
             fixed4 frag(v2f i) : SV_Target
             {
                 if(1<< (blocked[int(i.uv.x*5)][(int)(i.uv.y*5)]-1) & _Blocked)
                 return fixed4(0,0,0,0);
-                if( (blocked[int(i.uv.x*5)][(int)(i.uv.y*5)])==-1)
+                if( (blocked[int(i.uv.x*5)][(int)(i.uv.y*5)]==0))
                 return fixed4(0,0,0,0);
 
                 //归一
@@ -87,11 +87,13 @@
                 int phase=(_Phase+_Time.y*360/3)%360; 
                 float x=i.uv.x-0.5;
                 float y=i.uv.y-0.5;
+                float _x=x,_y=y;
+                x=cos(PI/4)*_x+sin(PI/4)*_y;
+                y=-sin(PI/4)*_x+cos(PI/4)*_y;
                 float theta=(abs(x)+abs(y))/0.5*360;
 
                 float alpha=(1-((phase-theta)/360) )%1;
-                // return fixed4(alpha,alpha,alpha,1);
-                // alpha=pow(alpha,2);
+                alpha=pow(alpha,4);
                 fixed4 textColor = _Color;
                 //反射颜色
                 fixed3 albedo = textColor.rgb;//* _Color.rgb;

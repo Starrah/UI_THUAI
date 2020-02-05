@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: CrossScan
-  m_Shader: {fileID: 4800000, guid: dd6f6dedfe3041148aedbef2a23cbce5, type: 3}
+  m_Name: Custom_SquareScan
+  m_Shader: {fileID: 4800000, guid: d0c8f439975ee474bbfa1dd955958939, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -23,4 +23,4 @@ Material:
     - _Blocked: 0
     - _Phase: 0
     m_Colors:
-    - _Color: {r: 0.7882353, g: 1, b: 0.8352941, a: 1}
+    - _Color: {r: 0.6367924, g: 1, b: 0.6667128, a: 0.49803922}
