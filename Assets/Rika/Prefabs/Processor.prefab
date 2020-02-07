@@ -594,9 +594,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8696207626444944903}
   - component: {fileID: 972727132978465692}
-  - component: {fileID: 4455632391366129236}
+  - component: {fileID: 3306884688270158766}
   m_Layer: 0
-  m_Name: Equip
+  m_Name: Processor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -637,7 +637,7 @@ Animation:
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_CullingType: 0
---- !u!114 &4455632391366129236
+--- !u!114 &3306884688270158766
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -646,7 +646,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5689307589144069140}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b8ce98b27cf58345af90606f9a95c27, type: 3}
+  m_Script: {fileID: 11500000, guid: a12bac215cfe423e89b1acfb7e8f19f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &5846253236121023974

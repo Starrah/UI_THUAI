@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 7209842028642709454}
   - component: {fileID: 1825514341963732472}
   - component: {fileID: 5361833274407315713}
-  - component: {fileID: 1304503153415626719}
+  - component: {fileID: 5176063655795416414}
   m_Layer: 0
-  m_Name: Forbid
+  m_Name: Building
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -80,7 +80,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &1304503153415626719
+--- !u!114 &5176063655795416414
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -89,6 +89,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 5932886647090240989}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89c44c289603ecd458d0ba7551c4d371, type: 3}
+  m_Script: {fileID: 11500000, guid: bf544c9eb8f94ac7b10e8b8b30cb42da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
