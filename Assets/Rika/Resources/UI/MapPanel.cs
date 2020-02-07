@@ -29,9 +29,11 @@ public class MapPanel : MonoBehaviour{
             childCanvas.SetActive(false);
     }
 
-    public GameObject canvasPrefab;
+    private GameObject canvasPrefab;
 
     private void Start(){
+        if (canvasPrefab is null)
+            canvasPrefab = Resources.Load<GameObject>("UI/MapPanelCanvas");
         Instantiate(canvasPrefab, transform);
         childCanvas = GetComponentInChildren<Canvas>().gameObject;
         childCanvas.SetActive(false);

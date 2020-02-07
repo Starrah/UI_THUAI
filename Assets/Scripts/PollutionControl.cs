@@ -68,6 +68,7 @@ public class PollutionControl : AGameObjectControl<PollutionSource, PollutionCon
     public override void SetModelStatus(StatusEnum value, PollutionSource element, bool noAnimation = true){
         ModelStatus = value;
         StartCoroutine(changeMaterial(colors[(int) value], noAnimation ? 0 : .5f));
+        GetComponent<MapPanel>().setStatus(element);
     }
     #endregion
 
