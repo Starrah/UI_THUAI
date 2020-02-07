@@ -1,37 +1,88 @@
-﻿﻿using System;
- using GameData.MapElement;
+﻿using System;
+using System.Collections;
+using GameData.MapElement;
 using UnityEngine;
+using System.Linq;
 
-public class PollutionControl : AGameObjectControl<PollutionSource, PollutionControl.StatusEnum>
-{
-    public enum StatusEnum
-    {
-        NOTDETECTED,//未探测 
-        DETECTED,//已探测
-        PROCESSED//已处理
+public class PollutionControl : AGameObjectControl<PollutionSource, PollutionControl.StatusEnum>{
+    public enum StatusEnum{
+        NOTDETECTED, //未探测 
+        DETECTED, //已探测
+        PROCESSED //已处理
     }
 
-    public override StatusEnum ModelStatus { get; protected set; } = StatusEnum.NOTDETECTED;
-        
-    public override void SetModelStatus(StatusEnum value, PollutionSource element, bool noAnimation = true)
-    {
-        ModelStatus = value;
-        //TODO 填充模型显示改变的控制代码
-        throw new NotImplementedException();
+    public override StatusEnum ModelStatus{ get; protected set; } = StatusEnum.NOTDETECTED;
+
+    #region 模型相关参数
+    private MeshRenderer[] Glows;
+    private MeshRenderer Bottom;
+    private static readonly Color[] colors = {Color.black, Color.red, Color.blue};
+    private static readonly int _Color = Shader.PropertyToID("_Color");
+
+    private void Start(){
+        #region 初始化模型有关参数
+        var renders = GetComponentsInChildren<MeshRenderer>().AsQueryable();
+        Glows = renders
+            .Where(meshRenderer => !meshRenderer.gameObject.name.Contains("Bottom"))
+            .ToArray();
+        Bottom = renders.Single(meshRenderer => meshRenderer.gameObject.name.Contains("Bottom"));
+        #endregion
     }
+
+    /// <summary>
+    /// 改变材质的颜色，用于表现污染源的治理情况
+    /// </summary>
+    /// <param name="tarC">变更的目标颜色</param>
+    /// <param name="fadeDelay">渐变时间。0为瞬间完成</param>
+    /// <returns></returns>
+    IEnumerator changeMaterial(Color tarC, float fadeDelay = 0){
+        var delay = 0f;
+        var initC = Glows[0].material.GetColor(_Color);
+
+        var g = new Material(Glows[0].material);
+        var b = new Material(Bottom.material);
+
+        foreach (var glow in Glows)
+            glow.material = g;
+        Bottom.material = b;
+        if (fadeDelay > 0)
+            while (delay < fadeDelay){
+                delay += Time.fixedDeltaTime;
+                var nowC = Color.Lerp(initC, tarC, delay / fadeDelay);
+                g.SetColor(_Color, nowC);
+                b.SetColor(_Color, new Color(nowC.r, nowC.g, nowC.b, .33f));
+                yield return new WaitForEndOfFrame();
+            }
+        else{
+            g.SetColor(_Color, tarC);
+            b.SetColor(_Color, new Color(tarC.r, tarC.g, tarC.b, .33f));
+        }
+    }
+    #endregion
+
+    #region 状态改变事件处理
+    private PollutionSource _pollutionSource;
+
     
+    
+    public override void SetModelStatus(StatusEnum value, PollutionSource element, bool noAnimation = true){
+        ModelStatus = value;
+        StartCoroutine(changeMaterial(colors[(int) value], noAnimation ? 0 : .5f));
+        GetComponent<MapPanel>().setStatus(element);
+    }
+    #endregion
+
     /**
      * 根据地图信息，无动画的直接改变状态
      */
-    public override void SyncMapElementStatus(PollutionSource element)
-    {
+    public override void SyncMapElementStatus(PollutionSource element){
         StatusEnum status;
         if (element.Curbed != -1) status = StatusEnum.PROCESSED;
-        else
-        {
+        else{
             if (element.Visible[GameControl.Instance.myAi]) status = StatusEnum.DETECTED;
             else status = StatusEnum.NOTDETECTED;
         }
-        if(status != ModelStatus) SetModelStatus(status, element, true);
+
+        if (status != ModelStatus) SetModelStatus(status, element, true);
     }
 }

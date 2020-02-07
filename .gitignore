@@ -63,3 +63,7 @@ crashlytics-build.properties
 
 #idea files
 .idea/
+
+# psd files
+*.psd
+*.psd.meta

@@ -23,3 +23,10 @@
     * 已治理
 
 关于加入**部分治理**状态的讨论正在进行中。
+
+## Scan 检测器/治理器动画效果
+目前位于 `Assets/Rika/Materials/Scans` 下各文件夹内的`prefab`文件。
+* CrossScan 十字、SquareScan 正方形
+* 参数
+    * Color 动画的颜色
+    * Blocked 有哪些地块被建筑物遮挡。具体含义见有关脚本中的注释。
