@@ -60,10 +60,16 @@ public class PollutionControl : AGameObjectControl<PollutionSource, PollutionCon
     }
     #endregion
 
+    #region 状态改变事件处理
+    private PollutionSource _pollutionSource;
+
+    
+    
     public override void SetModelStatus(StatusEnum value, PollutionSource element, bool noAnimation = true){
         ModelStatus = value;
         StartCoroutine(changeMaterial(colors[(int) value], noAnimation ? 0 : .5f));
     }
+    #endregion
 
     /**
      * 根据地图信息，无动画的直接改变状态
