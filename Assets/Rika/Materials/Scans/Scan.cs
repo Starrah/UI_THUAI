@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Scan : MonoBehaviour{
-    private Color scanColor = Color.white;
-    Material material;
+    [SerializeField]  Color scanColor = Color.white;
+    [SerializeField] Material material;
 
     /// <summary>
     /// 设置地块扫描颜色，包含透明度项

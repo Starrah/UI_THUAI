@@ -16,6 +16,7 @@ public class GlobalConstants : MonoBehaviour{
     public Forbid Forbid;
     public Polluted Polluted;
 
+    
     private void Start(){
         StartCoroutine(this.nextTick(() => { Equip.Create(new Vector2(), DeviceRangeTypes.DIAGON); }));
     }
