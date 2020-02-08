@@ -18,7 +18,7 @@ namespace GameData.MapElement
 
         /**
          * 长为2的数组，表示污染源对玩家的可见性
-         * 下标0和1分别对应两种建筑物
+         * 下标0和1分别对应两个玩家AI0和AI1，例如{true false}表示AI0可见、AI1不可见
          */
         public bool[] Visible = new bool[2];
         
