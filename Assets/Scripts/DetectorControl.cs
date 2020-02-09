@@ -15,7 +15,7 @@ public class DetectorControl : AGameObjectControl<Detector, DetectorControl.Stat
         if (!noAnimation)
             Animation.Play("in");
         Animation.PlayQueued("idle", QueueMode.CompleteOthers);
-        scan = Instantiate(FindObjectOfType<GlobalConstants>().GetScan(element.RangeType));
+        scan = Instantiate(Rika.Utils.GetScan(element.RangeType));
         var transform1 = scan.transform;
         var position = transform1.position;
         position = new Vector3(position.x, .01f, position.z);
