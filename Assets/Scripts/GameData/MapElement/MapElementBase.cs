@@ -4,11 +4,20 @@ namespace GameData.MapElement
 { 
     public abstract class MapElementBase
     {
-        public MapPlace Place;//所在的位置的MapPlace对象
+        public Vector2Int Position;
 
+        public MapPlace GetPlace(MapPlace[][] map)
+        {
+            return map[Position.x][Position.y];
+        }
+
+        public MapElementBase(Vector2Int position)
+        {
+            Position = position;
+        }
         public MapElementBase(MapPlace place)
         {
-            Place = place;
+            Position = place.Position;
         }
     }
 }

@@ -1,18 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
 using GameData.MapElement;
+using UnityEngine;
 
 namespace GameData
 {
     public class MapPlace
     {
-        public Vector2 Position;
+        public Vector2Int Position;
         public MapPlaceTypes Type = MapPlaceTypes.CANNOT_BUY;//类型
         public int Owner = -1;//所有者，若无人所有就是-1，否则是0或1
         public BidInfo Bid = null;//当前的出价信息。流拍后或卖出后，需要一直保留着最后一次的出价信息。
         public List<MapElementBase> Elements = new List<MapElementBase>();
 
-        public MapPlace(Vector2 position)
+        public MapPlace(Vector2Int position)
         {
             Position = position;
         }
