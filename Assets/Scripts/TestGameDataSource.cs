@@ -1,6 +1,8 @@
 ﻿﻿using System;
  using System.Collections.Generic;
+ using System.IO;
  using System.Reflection;
+ using System.Runtime.Serialization.Formatters.Binary;
  using GameData;
  using GameData.GameEvents;
  using GameData.MapElement;
@@ -9,26 +11,32 @@ using Vector2 = System.Numerics.Vector2;
 
 public class TestGameDataSource: GameDataSource
 {
-    public static T DeepCopyByReflect<T>(T obj)
+    class MapAdapter
     {
-        //如果是字符串或值类型则直接返回
-        if (obj is string || obj.GetType().IsValueType) return obj;
-
-        object retval = Activator.CreateInstance(obj.GetType());
-        FieldInfo[] fields = obj.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-        foreach (FieldInfo field in fields)
+        public MapPlace[][] Map;
+    }
+    public static T DeepCopyObject<T>(T obj)
+    where T: class
+    {
+        if (obj is MapPlace[][])
         {
-            try { field.SetValue(retval, DeepCopyByReflect(field.GetValue(obj))); }
-            catch { }
+            return DeepCopyMap(obj as MapPlace[][]) as T;
         }
-        return (T)retval;
+        var qwq = JsonUtility.ToJson(obj); 
+        return JsonUtility.FromJson<T>(qwq);
+    }
+
+    public static MapPlace[][] DeepCopyMap(MapPlace[][] obj)
+    {
+        var qwq = JsonUtility.ToJson(new MapAdapter(){Map = obj}); 
+        return JsonUtility.FromJson<MapAdapter>(qwq).Map;
     }
     
     public new void ReadFile(string fileName)
     {
-        _startData = new StartData {MapHeight = 3, MapWidth = 3, Map = new MapPlace[][3], 
+        _startData = new StartData {MapHeight = 3, MapWidth = 3, Map = new MapPlace[3][], 
             PollutionComponentProcessPrices = new int[]{30,30}, PollutionComponentProcessProfits = new int[]{300,300},
-            ActualRoundNum = 2, MaxRoundNum = 50, DetectorRangePrices = new int[]{10,15,18}, 
+            ActualRoundNum = 1, MaxRoundNum = 50, DetectorRangePrices = new int[]{10,15,18}, 
             Moneys = new int[]{1000,1000}, Scores = new int[]{0,0}, LandPrice = 10, TipsterPrice = 30, 
             ProcessorRangePrices = new int[]{10,15,18}
         };
@@ -37,30 +45,57 @@ public class TestGameDataSource: GameDataSource
             _startData.Map[x] = new MapPlace[3];
             for (int y = 0; y < _startData.MapHeight; y++)
             {
-                var place = new MapPlace(new Vector2(x, y));
+                var place = new MapPlace(new Vector2Int(x, y));
                 _startData.Map[x][y] = place;
             }
         }
-        _startData.Map[0][0].Elements.Add(new Building(_startData.Map[0][0]));
-        _startData.Map[0][1].Elements.Add(new PollutionSource(_startData.Map[0][1])
+        _startData.Map[0][0].Elements.Add(new Building(new Vector2Int(0,0)));
+        _startData.Map[0][2].Elements.Add(new PollutionSource(new Vector2Int(0,2))
         {
             Components = new bool[]{true,false},Visible = new bool[]{true, false}
         });
-        _startData.Map[1][1].Elements.Add(new Detector(_startData.Map[1][1])
+        _startData.Map[1][1].Elements.Add(new Detector(new Vector2Int(1,1))
         {
-            RangeType = DeviceRangeTypes.SQUARE,
-            Owner = 0
+            RangeType = DeviceRangeTypes.SQUARE, Owner = 0
         });
 
-        var map1 = DeepCopyByReflect<MapPlace[][]>(_startData.Map);
-        var Processor0 = new Processor(){Owner = 0, Place = _startData[]};
-        _turnData[0] = new TurnData(){Ai = 0, Index = 0, Moneys = new int[]{1000, 1000}, Scores = new int[]{0, 0},
-            Events = new List<GameEventBase>()
-            {
-                new NewBidEvent(){Bid = new BidInfo(){Ai = 0, money = 80, turn = 0}},
-                new PutProcessorEvent(){}
-            }};
+        //处理每回合事件的方式，可以写成一个复杂的if判断和循环：
+        //step 1：深拷贝整张地图（从上一回合的地图拷贝）
+        var map1 = DeepCopyObject(_startData.Map);
+        //step 2:生成TurnData对象：注意Moneys、Scores数组要重新new，不能复用
+        var turnData = new TurnData(){Map = map1, Ai = 0, Index = 0, 
+            Moneys = new int[]{_startData.Moneys[0], _startData.Moneys[1]},
+            Scores = new int[]{_startData.Scores[0], _startData.Scores[1]},
+        };
         
+        //step 3：产生事件和修改地图
+        //3.1 出价事件
+        //3.1.1 准备用到的相关对象
+        var bidInfo10 = new BidInfo() {Ai = 0, money = 80, turn = 0};
+        //3.1.2 准备事件对象和放Events中
+        var bidEvent = new NewBidEvent() {Position = new Vector2Int(1, 0), Bid = bidInfo10};
+        turnData.Events.Add(bidEvent);
+        //3.1.3 根据事件的作用效果修改地图
+        map1[1][0].Bid = bidInfo10;
+        
+        //3.2 放置治理设备事件
+        //3.2.1 准备用到的相关对象
+        var processor22 = new Processor(new Vector2Int(2,2)){Owner = 0};
+        //3.1.2 准备事件对象和放Events中
+        var processorEvent = new PutProcessorEvent()
+        {
+            Position = new Vector2Int(2, 2), Processor = processor22,
+            Result = new List<Tuple<PollutionSource, int>>()
+                {new Tuple<PollutionSource, int>(map1[0][2].GetElement<PollutionSource>(), 300)}
+        };
+        turnData.Events.Add(processorEvent);
+        //3.1.3 根据事件的作用效果修改地图
+        map1[2][2].Elements.Add(processor22);
+        map1[0][2].GetElement<PollutionSource>().Curbed = 0;
+        turnData.Moneys[0] += 300;
+        
+        //step 4：缓存该turnData进入数组里面
+        _turnData[0] = turnData;
     }
 
     public new StartData GetStartData()

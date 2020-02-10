@@ -1,10 +1,13 @@
-﻿namespace GameData.MapElement
+﻿using UnityEngine;
+
+namespace GameData.MapElement
 {
     public class Processor: MapElementBase
     {
-        public Processor(MapPlace place) : base(place)
-        {
-        }
+        public Processor(): base(Vector2Int.zero){}
+        public Processor(MapPlace place) : base(place) {}
+        
+        public Processor(Vector2Int position): base(position){}
         
         public int Owner = -1;
         public DeviceRangeTypes RangeType;//覆盖区域范围类型
