@@ -1,21 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 using GameData.MapElement;
 using UnityEngine;
 
 namespace GameData
 {
+    [Serializable]
     public class MapPlace
     {
-        public Vector2Int Position;
+        public Point Position;
         public MapPlaceTypes Type = MapPlaceTypes.CANNOT_BUY;//类型
         public int Owner = -1;//所有者，若无人所有就是-1，否则是0或1
         public BidInfo Bid = null;//当前的出价信息。流拍后或卖出后，需要一直保留着最后一次的出价信息。
         public List<MapElementBase> Elements = new List<MapElementBase>();
 
-        public MapPlace(): this(Vector2Int.zero){}
+        public MapPlace(): this(new Point()){}
         
-        public MapPlace(Vector2Int position)
+        public MapPlace(Point position)
         {
             Position = position;
         }
