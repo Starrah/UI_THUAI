@@ -7,13 +7,13 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class DirtControl : MonoBehaviour {
-    private MapPlace _place = new MapPlace(new System.Numerics.Vector2(0, 0));
+    private MapPlace _place = new MapPlace(new Vector2Int(0, 0));
     private MeshRenderer _meshRenderer;
     private Material _material;
 
     private Color _color {
         get {
-            var c = (int) (_place.Position.X + _place.Position.Y) % 2 == 0 ? Color.white : new Color(.8f, .8f, .8f);
+            var c = (int) (_place.Position.x + _place.Position.y) % 2 == 0 ? Color.white : new Color(.8f, .8f, .8f);
             if (_place.Type == MapPlaceTypes.BOUGHT)
                 c *= (_place.Owner == 0 ? new Color(1, .6f, .6f) : new Color(.6f, .6f, 1));
             return c;
@@ -24,7 +24,7 @@ public class DirtControl : MonoBehaviour {
         get => _place;
         set {
             _place = value;
-            transform.position = new Vector3(value.Position.X, 0, value.Position.Y);
+            transform.position = new Vector3(value.Position.x, 0, value.Position.y);
             //如果出价状态非空（即至少进入拍卖环节
             if (!(value.Bid is null)){
                 switch (value.Type){
