@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿﻿using System.Collections.Generic;
 
 namespace GameData
 {
@@ -19,7 +19,7 @@ namespace GameData
             return null;
         }
 
-        public StartData GetTurnData(int turnIndex)
+        public TurnData GetTurnData(int turnIndex)
         {
             //TODO
             return null;

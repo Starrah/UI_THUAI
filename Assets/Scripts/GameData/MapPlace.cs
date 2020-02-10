@@ -13,9 +13,25 @@ namespace GameData
         public BidInfo Bid = null;//当前的出价信息。流拍后或卖出后，需要一直保留着最后一次的出价信息。
         public List<MapElementBase> Elements = new List<MapElementBase>();
 
+        public MapPlace(): this(Vector2Int.zero){}
+        
         public MapPlace(Vector2Int position)
         {
             Position = position;
+        }
+
+        public T GetElement<T>()
+            where T : MapElementBase
+        {
+            foreach (MapElementBase element in Elements)
+            {
+                if (element is T t)
+                {
+                    return t;
+                }
+            }
+
+            return null;
         }
     }
     
