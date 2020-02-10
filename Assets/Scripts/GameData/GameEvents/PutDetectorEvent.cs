@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GameData.MapElement;
 
 namespace GameData.GameEvents
 {
+    [Serializable]
     public class PutDetectorEvent: GameEventBase
     {
         public Detector Detector;

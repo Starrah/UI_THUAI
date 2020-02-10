@@ -4,6 +4,7 @@ using GameData.MapElement;
 
 namespace GameData.GameEvents
 {
+    [Serializable]
     public class PutProcessorEvent: GameEventBase
     {
         public Processor Processor;

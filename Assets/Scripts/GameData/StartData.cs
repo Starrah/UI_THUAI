@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GameData.MapElement;
 using UnityEditor.PackageManager.Requests;
 
 namespace GameData
 {
+    [Serializable]
     public class StartData
     {
         public int MapWidth;

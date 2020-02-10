@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace GameData.MapElement
 {
+    [Serializable]
     public class PollutionSource: MapElementBase
     {
         public PollutionSource(){}
         public PollutionSource(MapPlace place) : base(place) {}
         
-        public PollutionSource(Vector2Int position): base(position){}
+        public PollutionSource(Point position): base(position){}
         
         public int Curbed = -1;//-1表示未被治理，0或1表示已被某个玩家治理
         

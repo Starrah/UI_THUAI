@@ -1,12 +1,14 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace GameData.MapElement
 {
+    [Serializable]
     public class Building: MapElementBase
     {
         public Building() {}
         public Building(MapPlace place) : base(place) {}
         
-        public Building(Vector2Int position): base(position){}
+        public Building(Point position): base(position){}
     }
 }

@@ -33,7 +33,7 @@ public class GameControl : MonoBehaviour
         }
     }
 
-    T FindMapObject<T>(Vector2Int position) where T: MonoBehaviour
+    T FindMapObject<T>(Point position) where T: MonoBehaviour
     {
         foreach (var obj in _gameMap[position.x][position.y])
         {
