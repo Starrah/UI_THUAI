@@ -3,6 +3,8 @@
  using System.IO;
  using System.Reflection;
  using System.Runtime.Serialization.Formatters.Binary;
+ using System.Runtime.Serialization.Json;
+ using System.Text;
  using GameData;
  using GameData.GameEvents;
  using GameData.MapElement;
@@ -11,25 +13,58 @@ using Vector2 = System.Numerics.Vector2;
 
 public class TestGameDataSource: GameDataSource
 {
-    class MapAdapter
+    public static string Serialize<T>(T obj)
+        where T: class
     {
-        public MapPlace[][] Map;
+        DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(T));
+        MemoryStream msObj = new MemoryStream();
+        //将序列化之后的Json格式数据写入流中
+        js.WriteObject(msObj, obj);
+        msObj.Position = 0;
+        //从0这个位置开始读取流中的数据
+        StreamReader sr = new StreamReader(msObj, Encoding.UTF8);
+        string json = sr.ReadToEnd();
+        sr.Close();
+        msObj.Close();
+        return json;
     }
+    
+    public static T Deserialize<T>(string json)
+        where T: class
+    {
+        using (var ms = new MemoryStream(Encoding.Unicode.GetBytes(json)))
+        {
+            DataContractJsonSerializer deseralizer = new DataContractJsonSerializer(typeof(T));
+            return deseralizer.ReadObject(ms) as T;// //反序列化ReadObject
+        }
+    }
+    
     public static T DeepCopyObject<T>(T obj)
-    where T: class
+        where T: class
     {
         if (obj is MapPlace[][])
         {
-            return DeepCopyMap(obj as MapPlace[][]) as T;
+            return DeepCopy2DArray(obj as MapPlace[][]) as T;
         }
-        var qwq = JsonUtility.ToJson(obj); 
-        return JsonUtility.FromJson<T>(qwq);
+        var qwq = Serialize(obj); 
+        return Deserialize<T>(qwq);
     }
 
-    public static MapPlace[][] DeepCopyMap(MapPlace[][] obj)
+    public static T[][] DeepCopy2DArray<T>(T[][] obj)
+        where T: class
     {
-        var qwq = JsonUtility.ToJson(new MapAdapter(){Map = obj}); 
-        return JsonUtility.FromJson<MapAdapter>(qwq).Map;
+        T[][] result = new T[obj.Length][];
+        for (int i = 0; i < obj.Length; i++)
+        {
+            T[] subArray = obj[i];
+            result[i] = new T[subArray.Length];
+            for (int j = 0; j < subArray.Length; j++)
+            {
+                result[i][j] = DeepCopyObject(subArray[j]);
+            }
+        }
+
+        return result;
     }
     
     public new void ReadFile(string fileName)

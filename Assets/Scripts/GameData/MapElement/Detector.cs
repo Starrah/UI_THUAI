@@ -4,7 +4,7 @@ namespace GameData.MapElement
 {
     public class Detector: MapElementBase
     {
-        public Detector(): base(Vector2Int.zero){}
+        public Detector(){}
         
         public Detector(MapPlace place) : base(place) {}
         
