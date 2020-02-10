@@ -6,6 +6,7 @@ namespace GameData.MapElement
     {
         public Vector2Int Position;
 
+        public MapElementBase(){}
         public MapPlace GetPlace(MapPlace[][] map)
         {
             return map[Position.x][Position.y];

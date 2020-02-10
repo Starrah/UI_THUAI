@@ -4,7 +4,7 @@ namespace GameData.MapElement
 {
     public class Processor: MapElementBase
     {
-        public Processor(): base(Vector2Int.zero){}
+        public Processor(){}
         public Processor(MapPlace place) : base(place) {}
         
         public Processor(Vector2Int position): base(position){}

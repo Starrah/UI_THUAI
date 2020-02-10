@@ -5,7 +5,7 @@ namespace GameData.MapElement
 {
     public class PollutionSource: MapElementBase
     {
-        public PollutionSource(): base(Vector2Int.zero){}
+        public PollutionSource(){}
         public PollutionSource(MapPlace place) : base(place) {}
         
         public PollutionSource(Vector2Int position): base(position){}
