@@ -7,7 +7,7 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class DirtControl : MonoBehaviour {
-    private MapPlace _place = new MapPlace(new Vector2Int(0, 0));
+    private MapPlace _place = new MapPlace(new Point(0, 0));
     private MeshRenderer _meshRenderer;
     private Material _material;
 
