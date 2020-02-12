@@ -3,6 +3,8 @@
  using System.IO;
  using System.Reflection;
  using System.Runtime.Serialization.Formatters.Binary;
+ using System.Runtime.Serialization.Json;
+ using System.Text;
  using GameData;
  using GameData.GameEvents;
  using GameData.MapElement;
@@ -11,27 +13,8 @@ using Vector2 = System.Numerics.Vector2;
 
 public class TestGameDataSource: GameDataSource
 {
-    class MapAdapter
-    {
-        public MapPlace[][] Map;
-    }
-    public static T DeepCopyObject<T>(T obj)
-    where T: class
-    {
-        if (obj is MapPlace[][])
-        {
-            return DeepCopyMap(obj as MapPlace[][]) as T;
-        }
-        var qwq = JsonUtility.ToJson(obj); 
-        return JsonUtility.FromJson<T>(qwq);
-    }
-
-    public static MapPlace[][] DeepCopyMap(MapPlace[][] obj)
-    {
-        var qwq = JsonUtility.ToJson(new MapAdapter(){Map = obj}); 
-        return JsonUtility.FromJson<MapAdapter>(qwq).Map;
-    }
     
+
     public new void ReadFile(string fileName)
     {
         _startData = new StartData {MapHeight = 3, MapWidth = 3, Map = new MapPlace[3][], 
@@ -45,23 +28,23 @@ public class TestGameDataSource: GameDataSource
             _startData.Map[x] = new MapPlace[3];
             for (int y = 0; y < _startData.MapHeight; y++)
             {
-                var place = new MapPlace(new Vector2Int(x, y));
+                var place = new MapPlace(new Point(x, y));
                 _startData.Map[x][y] = place;
             }
         }
-        _startData.Map[0][0].Elements.Add(new Building(new Vector2Int(0,0)));
-        _startData.Map[0][2].Elements.Add(new PollutionSource(new Vector2Int(0,2))
+        _startData.Map[0][0].Elements.Add(new Building(new Point(0,0)));
+        _startData.Map[0][2].Elements.Add(new PollutionSource(new Point(0,2))
         {
             Components = new bool[]{true,false},Visible = new bool[]{true, false}
         });
-        _startData.Map[1][1].Elements.Add(new Detector(new Vector2Int(1,1))
+        _startData.Map[1][1].Elements.Add(new Detector(new Point(1,1))
         {
             RangeType = DeviceRangeTypes.SQUARE, Owner = 0
         });
 
         //处理每回合事件的方式，可以写成一个复杂的if判断和循环：
         //step 1：深拷贝整张地图（从上一回合的地图拷贝）
-        var map1 = DeepCopyObject(_startData.Map);
+        var map1 = Utils.Clone(_startData.Map);
         //step 2:生成TurnData对象：注意Moneys、Scores数组要重新new，不能复用
         var turnData = new TurnData(){Map = map1, Ai = 0, Index = 0, 
             Moneys = new int[]{_startData.Moneys[0], _startData.Moneys[1]},
@@ -73,18 +56,18 @@ public class TestGameDataSource: GameDataSource
         //3.1.1 准备用到的相关对象
         var bidInfo10 = new BidInfo() {Ai = 0, money = 80, turn = 0};
         //3.1.2 准备事件对象和放Events中
-        var bidEvent = new NewBidEvent() {Position = new Vector2Int(1, 0), Bid = bidInfo10};
+        var bidEvent = new NewBidEvent() {Position = new Point(1, 0), Bid = bidInfo10};
         turnData.Events.Add(bidEvent);
         //3.1.3 根据事件的作用效果修改地图
         map1[1][0].Bid = bidInfo10;
         
         //3.2 放置治理设备事件
         //3.2.1 准备用到的相关对象
-        var processor22 = new Processor(new Vector2Int(2,2)){Owner = 0};
+        var processor22 = new Processor(new Point(2,2)){Owner = 0};
         //3.1.2 准备事件对象和放Events中
         var processorEvent = new PutProcessorEvent()
         {
-            Position = new Vector2Int(2, 2), Processor = processor22,
+            Position = new Point(2, 2), Processor = processor22,
             Result = new List<Tuple<PollutionSource, int>>()
                 {new Tuple<PollutionSource, int>(map1[0][2].GetElement<PollutionSource>(), 300)}
         };
@@ -95,7 +78,7 @@ public class TestGameDataSource: GameDataSource
         turnData.Moneys[0] += 300;
         
         //step 4：缓存该turnData进入数组里面
-        _turnData[0] = turnData;
+        _turnData.Add(turnData);
     }
 
     public new StartData GetStartData()
@@ -110,5 +93,5 @@ public class TestGameDataSource: GameDataSource
     
     public StartData _startData;
 
-    public List<TurnData> _turnData;
+    public List<TurnData> _turnData = new List<TurnData>();
 }

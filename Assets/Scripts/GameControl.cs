@@ -3,37 +3,63 @@ using System.Collections.Generic;
 using GameData;
 using GameData.MapElement;
 using UnityEngine;
-using UnityEngine.UI;
 
+/**
+ * 控制游戏全局状态的脚本。
+ * 它是单例，类内部提供静态Instance变量用于获得实例，
+ */
 public class GameControl : MonoBehaviour
 {
-    public static GameControl Instance = null;
+    public static GameControl Instance { get; private set; } = null;
+
+    /**
+     * 游戏数据源对象。
+     * 请注意其他人使用此对象时不要对里面的数据内容做任何修改。
+     */
+    public GameDataSource DataSource;
+
+    /**
+     * 当前的播放状态，true为播放中、false为已暂停。
+     * 播放器控制部分可直接改变此属性的值。
+     */
+    public bool IsPlaying { get; set; } = false;
+
+    /**
+     * 游戏的播放速度。播放器控制部分可直接改变此属性的值。
+     */
+    public float PlaySpeed { get; set; } = 1.0f;
     
-    private GameDataSource _dataSource;
+    /**
+     * 我的阵营编号
+     */
+    public int MyAi { get; private set; } = -1;
+    
+    //私有变量部分
     private List<GameObject>[][] _gameMap;
-
     private float _time = 0.0f;
-    public float timePerTurn = 0.5f;
+    private float _standardTimePerTurn = 0.5f;
     private int _currentTurn = -1;
-    public int myAi = -1;//我的阵营编号
-
-    private GameObject _objPollution;
-    private GameObject _objBuilding;
-    private GameObject _objDetector;
-    private GameObject _objProcessor;
-
+    
+    /**
+     * getter用于获得当前的回合数。
+     * setter是private的，如需设置回合请调用nextTurn或ChangeTurn接口。
+     *
+     * 若要获得本局游戏的总回合数，请使用DataSource.GetStartData().ActualRoundNum
+     */
     public int CurrentTurn
     {
         get => _currentTurn;
-        set
+        private set
         {
             _currentTurn = value;
             //TODO 通知UI刷新当前回合数的指示
-            GameObject.Find("Text").GetComponent<Text>().text = _currentTurn.ToString();
         }
     }
-
-    T FindMapObject<T>(Vector2Int position) where T: MonoBehaviour
+    
+    /**
+     * 找到指定位置上的、带有某一种脚本的游戏对象。
+     */
+    public T FindMapObject<T>(Point position) where T: MonoBehaviour
     {
         foreach (var obj in _gameMap[position.x][position.y])
         {
@@ -42,39 +68,49 @@ public class GameControl : MonoBehaviour
         }
         return null;
     }
-
-    void gameEnd()
+    
+    private void gameEnd()
     {
-        
+        //TODO    
     }
     
-    void nextTurn()
+    /**
+     * 使游戏切换到下一回合，并正常播放动画。
+     * 播放器控制部分在播放过程中其实不需要调用这个函数，
+     * 本类会在播放状态为播放中的时候、根据设定的播放倍率自动的调用这个函数的。
+     */
+    public void NextTurn()
     {
         CurrentTurn++;
-        if (CurrentTurn >= _dataSource.GetStartData().ActualRoundNum)
+        if (CurrentTurn >= DataSource.GetStartData().ActualRoundNum)
         {
             gameEnd();
             return;
         }
-        var turnData = _dataSource.GetTurnData(CurrentTurn);
+        var turnData = DataSource.GetTurnData(CurrentTurn);
         //TODO 播放事件动画（可能的物体实例化和析构）
     }
 
-    void changeTurn(int turn)
+    /**
+     * 直接改变游戏的回合状态。不会播放任何过渡动画。
+     * 常用于玩家直接改变当前播放回合的情况，播放器控制部分直接调用本函数即可。
+     */
+    void ChangeTurn(int turn)
     {
         CurrentTurn = turn;
         _time = 0;
-        var turnData = _dataSource.GetTurnData(CurrentTurn);
+        var turnData = DataSource.GetTurnData(CurrentTurn);
         //TODO 播放事件动画（可能的物体实例化和析构）
         //全图遍历、1.修改可复用对象的状况，2.删除多余对象。3.添加新加入的对象
     }
     // Start is called before the first frame update
+    
     void Start()
     {
-        _dataSource = new GameDataSource();
+        DataSource = new TestGameDataSource();
         Instance = GameObject.Find("GameControl").GetComponent<GameControl>();
 
-        var startData = _dataSource.GetStartData();
+        var startData = DataSource.GetStartData();
         for (int x = 0; x < startData.MapWidth; x++)
         {
             for (int y = 0; y < startData.MapHeight; y++)
@@ -118,9 +154,27 @@ public class GameControl : MonoBehaviour
     void Update()
     {
         _time += Time.deltaTime;
-        var turns = (int)Math.Floor(_time / timePerTurn);
+        var turns = (int)Math.Floor(_time / _standardTimePerTurn);
         for (var i = 0; i < turns; i++)
-            nextTurn();
-        _time -= turns * timePerTurn;
+            NextTurn();
+        _time -= turns * _standardTimePerTurn;
+    } 
+    
+    /**
+     * 返回长为2的int数组，依次表示玩家0和1的当前金钱值。
+     */
+    public int[] GetMoneys()
+    {
+        //TODO
+        return new int[] {0, 0};
+    }
+    
+    /**
+     * 返回长为2的int数组，依次表示玩家0和1的当前分数值。
+     */
+    public int[] GetScores()
+    {
+        //TODO
+        return new int[] {0, 0};
     }
 }

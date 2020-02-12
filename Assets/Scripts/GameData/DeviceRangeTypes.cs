@@ -1,5 +1,8 @@
-﻿namespace GameData
+﻿using System;
+
+namespace GameData
 {
+    [Serializable]
     public enum DeviceRangeTypes
     {
         STRAIGHT,//第一类（左右上下各延伸两格）

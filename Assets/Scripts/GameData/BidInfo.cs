@@ -1,5 +1,8 @@
-﻿namespace GameData
+﻿using System;
+
+namespace GameData
 {
+    [Serializable]
     public class BidInfo
     {
         public int Ai;//出价玩家0或1

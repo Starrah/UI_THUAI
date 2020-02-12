@@ -1,17 +1,20 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace GameData.MapElement
 { 
+    [Serializable]
     public abstract class MapElementBase
     {
-        public Vector2Int Position;
+        public Point Position;
 
+        public MapElementBase(){}
         public MapPlace GetPlace(MapPlace[][] map)
         {
             return map[Position.x][Position.y];
         }
 
-        public MapElementBase(Vector2Int position)
+        public MapElementBase(Point position)
         {
             Position = position;
         }

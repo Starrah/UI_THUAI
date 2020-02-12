@@ -79,7 +79,7 @@ public class PollutionControl : AGameObjectControl<PollutionSource, PollutionCon
         StatusEnum status;
         if (element.Curbed != -1) status = StatusEnum.PROCESSED;
         else{
-            if (element.Visible[GameControl.Instance.myAi]) status = StatusEnum.DETECTED;
+            if (element.Visible[GameControl.Instance.MyAi]) status = StatusEnum.DETECTED;
             else status = StatusEnum.NOTDETECTED;
         }
 
