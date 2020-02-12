@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GameData.GameEvents;
 using GameData.MapElement;
 
 namespace GameData
 {
+    [Serializable]
     public class TurnData
     {
         public int Index;//回合序号
