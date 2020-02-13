@@ -3,10 +3,8 @@ using GameData.MapElement;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Tests
-{
-    public class TestTestGameDataSource : UnityEngine.MonoBehaviour
-    {
+namespace Tests {
+    public class TestTestGameDataSource : UnityEngine.MonoBehaviour {
         public TestGameDataSource ds;
         private void Start()
         {
