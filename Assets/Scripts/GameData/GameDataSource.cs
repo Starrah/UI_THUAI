@@ -8,18 +8,18 @@ namespace GameData
         * 读取播放协议文件（一个符合播放协议的JSON文件），解析为每个回合的状态信息和动作信息，并缓存起来。
         * 该函数允许有比较长的耗时。
         */
-        public void ReadFile(string fileName)
+        public virtual void ReadFile(string fileName)
         {
             //TODO
         }
 
-        public StartData GetStartData()
+        public virtual StartData GetStartData()
         {
             //TODO
             return null;
         }
 
-        public TurnData GetTurnData(int turnIndex)
+        public virtual TurnData GetTurnData(int turnIndex)
         {
             //TODO
             return null;

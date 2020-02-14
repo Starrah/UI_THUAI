@@ -1,31 +1,25 @@
 ﻿﻿using System;
  using System.Collections.Generic;
- using System.IO;
- using System.Reflection;
- using System.Runtime.Serialization.Formatters.Binary;
- using System.Runtime.Serialization.Json;
- using System.Text;
  using GameData;
  using GameData.GameEvents;
  using GameData.MapElement;
-using UnityEngine;
-using Vector2 = System.Numerics.Vector2;
 
-public class TestGameDataSource: GameDataSource
+ public class TestGameDataSource: GameDataSource
 {
     
-
-    public new void ReadFile(string fileName)
+    public override void ReadFile(string fileName)
     {
-        _startData = new StartData {MapHeight = 3, MapWidth = 3, Map = new MapPlace[3][], 
+        _startData = new StartData {MapHeight = 20, MapWidth = 20, 
             PollutionComponentProcessPrices = new int[]{30,30}, PollutionComponentProcessProfits = new int[]{300,300},
             ActualRoundNum = 1, MaxRoundNum = 50, DetectorRangePrices = new int[]{10,15,18}, 
             Moneys = new int[]{1000,1000}, Scores = new int[]{0,0}, LandPrice = 10, TipsterPrice = 30, 
             ProcessorRangePrices = new int[]{10,15,18}
         };
+        
+        _startData.Map = new MapPlace[_startData.MapWidth][]; 
         for (int x = 0; x < _startData.MapWidth; x++)
         {
-            _startData.Map[x] = new MapPlace[3];
+            _startData.Map[x] = new MapPlace[_startData.MapHeight];
             for (int y = 0; y < _startData.MapHeight; y++)
             {
                 var place = new MapPlace(new Point(x, y));
@@ -81,12 +75,12 @@ public class TestGameDataSource: GameDataSource
         _turnData.Add(turnData);
     }
 
-    public new StartData GetStartData()
+    public override StartData GetStartData()
     {
         return _startData;
     }
 
-    public new TurnData GetTurnData(int turnIndex)
+    public override TurnData GetTurnData(int turnIndex)
     {
         return _turnData[turnIndex];
     }

@@ -23,7 +23,6 @@ namespace Tests {
 
         public void Data()
         {
-            Assert.IsTrue(ds.GetStartData().MapWidth == 3);
             Assert.IsTrue(ds.GetStartData().Scores[0] == 0);
             Assert.IsNotNull(ds.GetTurnData(0));
             try
