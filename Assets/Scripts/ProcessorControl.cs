@@ -10,6 +10,11 @@ public class ProcessorControl : AGameObjectControl<Processor, ProcessorControl.S
     public override StatusEnum ModelStatus { get; protected set; } = StatusEnum.DISABLED;
     private Scan scan;
 
+    public int Blocked {
+        get => scan.Blocked;
+        set => scan.Blocked = value;
+    }
+
     public override void SetModelStatus(StatusEnum value, Processor element, bool noAnimation = true){
         var Animation = GetComponent<Animation>();
         if (!noAnimation)
