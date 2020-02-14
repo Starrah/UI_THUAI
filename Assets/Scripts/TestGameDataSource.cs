@@ -14,7 +14,6 @@ using Vector2 = System.Numerics.Vector2;
 public class TestGameDataSource: GameDataSource
 {
     
-
     public new void ReadFile(string fileName)
     {
         _startData = new StartData {MapHeight = 3, MapWidth = 3, Map = new MapPlace[3][], 
@@ -42,7 +41,7 @@ public class TestGameDataSource: GameDataSource
             RangeType = DeviceRangeTypes.SQUARE, Owner = 0
         });
 
-        //处理每回合事件的方式，可以写成一个复杂的if判断和循环：
+        //处理每回合事件的方式，可以写成一个复杂的if判断和循s环：
         //step 1：深拷贝整张地图（从上一回合的地图拷贝）
         var map1 = Utils.Clone(_startData.Map);
         //step 2:生成TurnData对象：注意Moneys、Scores数组要重新new，不能复用
