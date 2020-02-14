@@ -135,7 +135,7 @@ public class GameControl : MonoBehaviour
                 var dirtControl = dirtObj.GetComponent<DirtControl>();
                 dirtControl.Place = startData.Map[x][y];
                 dirtObj.transform.position = new Vector3(x, dirtObj.transform.position.y, y);
-                continue;
+                // continue;
                 foreach (MapElementBase element in startData.Map[x][y].Elements)
                 {
                     GameObject obj = null;
