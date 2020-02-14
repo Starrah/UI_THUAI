@@ -11,6 +11,7 @@ namespace Tests {
             Generate();
             Data();
             CopyFeature();
+            Other();
             Debug.Log("Test TestGameDataSource passed");
         }
 
@@ -47,6 +48,12 @@ namespace Tests {
             Assert.IsTrue(ds.GetTurnData(0).Map[0][2].GetElement<PollutionSource>().Curbed == 0);
             Assert.IsNull(ds.GetStartData().Map[1][0].Bid);
             Assert.IsNotNull(ds.GetTurnData(0).Map[1][0].Bid);
+        }
+
+        public void Other()
+        {
+            object[][] qwq = new object[][]{new object[]{1,2}, new object[]{3,4}};
+            Assert.IsTrue(((int)qwq[0][0]) == 1);
         }
     }
 }

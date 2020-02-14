@@ -106,8 +106,8 @@ public class GameControl : MonoBehaviour
     // Start is called before the first frame update
     
     private Dictionary<string, GameObject> _prefabs = new Dictionary<string, GameObject>();
-    
-    void Start()
+
+    void Awake()
     {
         Instance = GameObject.Find("GameControl").GetComponent<GameControl>();
         
@@ -115,8 +115,11 @@ public class GameControl : MonoBehaviour
         DataSource.ReadFile("");
         
         //TODO MyAi问题
-        MyAi = 0;
-        
+        MyAi = 0;   
+    }
+
+    void Start()
+    {
         _prefabs["Dirt"] = Resources.Load<GameObject>("Prefabs/Dirt");
         _prefabs["Pollution"] = Resources.Load<GameObject>("Prefabs/Pollution");
         _prefabs["Building"] = Resources.Load<GameObject>("Prefabs/Building");
@@ -132,6 +135,7 @@ public class GameControl : MonoBehaviour
                 var dirtControl = dirtObj.GetComponent<DirtControl>();
                 dirtControl.Place = startData.Map[x][y];
                 dirtObj.transform.position = new Vector3(x, dirtObj.transform.position.y, y);
+                continue;
                 foreach (MapElementBase element in startData.Map[x][y].Elements)
                 {
                     GameObject obj = null;
