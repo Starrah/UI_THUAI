@@ -10,13 +10,13 @@ using UnityEngine.UI;
 using UnityEngine.UIElements;
 using Image = UnityEngine.UI.Image;
 
-public class MapPanel : MonoBehaviour{
-    private GameObject childCanvas;
+public class MapPanel : MonoBehaviour {
+    private Canvas childCanvas;
     private Camera mainCamera;
 
     private void OnMouseOver(){
-        if (!childCanvas.activeInHierarchy)
-            childCanvas.SetActive(true);
+        if (!childCanvas.enabled)
+            childCanvas.enabled = true;
         var childPanel = childCanvas.transform.Find("Panel").gameObject;
         var rectTransform = childPanel.GetComponent<RectTransform>();
         var size = rectTransform.sizeDelta;
@@ -25,30 +25,29 @@ public class MapPanel : MonoBehaviour{
     }
 
     private void OnMouseExit(){
-        if (childCanvas.activeInHierarchy)
-            childCanvas.SetActive(false);
+        if (childCanvas.enabled)
+            childCanvas.enabled = false;
     }
 
-    private GameObject canvasPrefab;
 
     private void Start(){
-        if (canvasPrefab is null)
+        /*if (canvasPrefab is null)
             canvasPrefab = Resources.Load<GameObject>("UI/MapPanelCanvas");
-        Instantiate(canvasPrefab, transform);
-        childCanvas = GetComponentInChildren<Canvas>().gameObject;
-        childCanvas.SetActive(false);
+        Instantiate(canvasPrefab, transform);*/
+        childCanvas = GetComponentInChildren<Canvas>();
+        childCanvas.enabled = false;
         mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
-        lines = childCanvas.GetComponentsInChildren<HorizontalLayoutGroup>();
-        clearPanel();
+        // lines = childCanvas.GetComponentsInChildren<HorizontalLayoutGroup>();
+        // clearPanel();
     }
 
     private void clearPanel(){
         foreach (var line in lines)
             for (var i = 0; i < line.transform.childCount; i++)
-                Destroy(line.transform.GetChild(i));
+                Destroy(line.transform.GetChild(i).gameObject);
     }
 
-    private HorizontalLayoutGroup[] lines;
+    public HorizontalLayoutGroup[] lines;
 
     public void setStatus<T>(T value) where T : MapElementBase{
         clearPanel();
