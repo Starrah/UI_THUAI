@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using System.Threading.Tasks;
 using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
 using GameData.GameEvents;
 using GameData.MapElement;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace GameData
 {
@@ -20,16 +20,17 @@ namespace GameData
         public void ReadFile(string fileName)
         {
             // 读取JSON文件并解析
-            string playFileContent = System.IO.File.ReadAllText(fileName);
-            var mStream = new MemoryStream(Encoding.Default.GetBytes(playFileContent));
-            var serializer = new DataContractJsonSerializer(typeof(JSONData));
-            JSONData updateInfo = (JSONData)serializer.ReadObject(mStream);
+            string playFileContent = File.ReadAllText(fileName);
+            JsonSerializer serializer = new JsonSerializer();
+            StringReader sr = new StringReader(playFileContent);
+            JSONData updateInfo = serializer.Deserialize<JSONData>(new JsonTextReader(sr));
+            
 
             _startData = new StartData
             {
                 MapHeight = updateInfo.settings.mapHeight,
                 MapWidth = updateInfo.settings.mapWidth, 
-                Map = new MapPlace[_startData.MapWidth][],
+                Map = new MapPlace[updateInfo.settings.mapWidth][],
                 PollutionComponentProcessPrices = updateInfo.settings.processorTypeCost,
                 PollutionComponentProcessProfits = updateInfo.settings.pollutionProfit,
                 ActualRoundNum = updateInfo.events.GetLength(0), 
@@ -78,7 +79,7 @@ namespace GameData
                         }
                         for(int i = typeTotal - strlen; i < typeTotal; i++)
                         {
-                            components[i] = Convert.ToBoolean(componType[i - typeTotal + strlen]);
+                            components[i] = componType[i - typeTotal + strlen] == 1;
                         } // 处理成分
 
                         bool[] visible = new bool[2];
@@ -117,8 +118,8 @@ namespace GameData
                 }
 
                 // 对当前回合中的事件按编号排序
-                // updateInfo.events[i] = AscendingOrder(updateInfo.events[i]);
-                updateInfo.events[i].AsQueryable().ToList().Sort(comparison:(object[] o1, object[] o2) => (int)(o1[0]) - (int)(o2[0]));
+                var curList = updateInfo.events[i].AsQueryable().ToList();
+                curList.Sort((o1, o2) => { return Convert.ToInt32(o1[0]) - Convert.ToInt32(o2[0]); });
 
                 //step 3:遍历当前回合中的事件类型
 
@@ -126,22 +127,22 @@ namespace GameData
                 TipsterEvent tipsterEvent = null;
                 PutDetectorEvent detectorEvent = null;
 
-                foreach (var currTurnEvent in updateInfo.events[i])
+                foreach (var currTurnEvent in curList)
                 { 
                     int x, y;
-                    switch(currTurnEvent[0])
+                    switch(Convert.ToInt32(currTurnEvent[0]))
                     {
                         case 1: // 建造治理设备
-                            turnData.Ai = (int)currTurnEvent[1];
+                            turnData.Ai = Convert.ToInt32(currTurnEvent[1]);
                             
                             // 准备治理设备
-                            x = (int)((object[])currTurnEvent[2])[0];
-                            y = (int)((object[])currTurnEvent[2])[1];
+                            x = Convert.ToInt32((currTurnEvent[2] as JArray)[0]);
+                            y = Convert.ToInt32((currTurnEvent[2] as JArray)[1]);
                             var processor = new Processor(new Point(x, y))
                             {
                                 Owner = turnData.Ai,
-                                RangeType = IntToDeviceType((int)currTurnEvent[3]),
-                                PollutionComponentIndex = (int)currTurnEvent[4]
+                                RangeType = IntToDeviceType(Convert.ToInt32(currTurnEvent[3])),
+                                PollutionComponentIndex = Convert.ToInt32(currTurnEvent[4])
                             };
 
                             // 准备event
@@ -157,12 +158,12 @@ namespace GameData
                             break;
                        
                         case 10 : // 成功治理污染源
-                            turnData.Ai = (int)currTurnEvent[1];
+                            turnData.Ai = Convert.ToInt32(currTurnEvent[1]);
 
                             // 准备事件对象和增加结果
-                            x = (int)((object[])currTurnEvent[2])[0];
-                            y = (int)((object[])currTurnEvent[2])[1];
-                            int profit = (int)currTurnEvent[3];
+                            x = Convert.ToInt32((currTurnEvent[2] as JArray)[0]);
+                            y = Convert.ToInt32((currTurnEvent[2] as JArray)[1]);
+                            int profit = Convert.ToInt32(currTurnEvent[3]);
                             processorEvent.Result.Add(new Tuple<PollutionSource, int>(turnData.Map[x][y].GetElement<PollutionSource>(), profit)); 
 
                             // 修改地图、金钱、分数
@@ -172,19 +173,19 @@ namespace GameData
                             break;
 
                         case 2: // 出新的竞价
-                            turnData.Ai = (int)currTurnEvent[1];
+                            turnData.Ai = Convert.ToInt32(currTurnEvent[1]);
 
                             // 准备出价信息
                             var bidInfo = new BidInfo()
                             {
                                 Ai = turnData.Ai,
-                                money = (int)currTurnEvent[3],
+                                money = Convert.ToInt32(currTurnEvent[3]),
                                 turn = i
                             };
 
                             // 准备事件对象和放Events中
-                            x = (int)((object[])currTurnEvent[2])[0];
-                            y = (int)((object[])currTurnEvent[2])[1];
+                            x = Convert.ToInt32((currTurnEvent[2] as JArray)[0]);
+                            y = Convert.ToInt32((currTurnEvent[2] as JArray)[1]);
                             var bidEvent = new NewBidEvent()
                             {
                                 Position = new Point(x, y),
@@ -197,11 +198,11 @@ namespace GameData
                             break;
 
                         case 3: // 使用情报贩子
-                            turnData.Ai = (int)currTurnEvent[1];
+                            turnData.Ai = Convert.ToInt32(currTurnEvent[1]);
 
                             // 准备事件对象和放Events中
-                            x = (int)((object[])currTurnEvent[2])[0];
-                            y = (int)((object[])currTurnEvent[2])[1];
+                            x = Convert.ToInt32((currTurnEvent[2] as JArray)[0]);
+                            y = Convert.ToInt32((currTurnEvent[2] as JArray)[1]);
                             tipsterEvent = new TipsterEvent()
                             {
                                 Position = new Point(x, y),
@@ -210,11 +211,11 @@ namespace GameData
                             break;
 
                         case 4: // 运用情报找到的污染源
-                            turnData.Ai = (int)currTurnEvent[1];
+                            turnData.Ai = Convert.ToInt32(currTurnEvent[1]);
 
                             // 修改event
-                            x = (int)((object[])currTurnEvent[2])[0];
-                            y = (int)((object[])currTurnEvent[2])[1];
+                            x = Convert.ToInt32((currTurnEvent[2] as JArray)[0]);
+                            y = Convert.ToInt32((currTurnEvent[2] as JArray)[1]);
                             tipsterEvent.Success = true;
                             tipsterEvent.Result = new Point(x, y);
 
@@ -223,15 +224,15 @@ namespace GameData
                             break;
 
                         case 5: // 放置检测设备
-                            turnData.Ai = (int)currTurnEvent[1];
+                            turnData.Ai = Convert.ToInt32(currTurnEvent[1]);
 
                             // 准备检测设备
-                            x = (int)((object[])currTurnEvent[2])[0];
-                            y = (int)((object[])currTurnEvent[2])[1];
+                            x = Convert.ToInt32((currTurnEvent[2] as JArray)[0]);
+                            y = Convert.ToInt32((currTurnEvent[2] as JArray)[1]);
                             var detector = new Detector(new Point(x, y))
                             {
                                 Owner = turnData.Ai,
-                                RangeType = IntToDeviceType((int)currTurnEvent[3]),
+                                RangeType = IntToDeviceType(Convert.ToInt32(currTurnEvent[3])),
                             };
 
                             // 准备event
@@ -247,11 +248,11 @@ namespace GameData
                             break;
 
                         case 6: // 检测到污染源
-                            turnData.Ai = (int)currTurnEvent[1];
+                            turnData.Ai = Convert.ToInt32(currTurnEvent[1]);
 
                             // 修改event
-                            x = (int)((object[])currTurnEvent[2])[0];
-                            y = (int)((object[])currTurnEvent[2])[1];
+                            x = Convert.ToInt32((currTurnEvent[2] as JArray)[0]);
+                            y = Convert.ToInt32((currTurnEvent[2] as JArray)[1]);
                             detectorEvent.Result.Add(new PollutionSource(new Point(x, y)));
 
                             // 修改地图
@@ -262,11 +263,11 @@ namespace GameData
                             break;
 
                         case 8: // 竞价成功
-                            turnData.Ai = (int)currTurnEvent[2];
+                            turnData.Ai = Convert.ToInt32(currTurnEvent[2]);
 
                             // 准备event
-                            x = (int)((object[])currTurnEvent[1])[0];
-                            y = (int)((object[])currTurnEvent[1])[1];
+                            x = Convert.ToInt32((currTurnEvent[1] as JArray)[0]);
+                            y = Convert.ToInt32((currTurnEvent[1] as JArray)[1]);
                             var bidSuccessEvent = new BidResultEvent()
                             {
                                 Position = new Point(x, y),
@@ -275,15 +276,15 @@ namespace GameData
                             turnData.Events.Add(bidSuccessEvent);
 
                             // 修改金钱
-                            turnData.Moneys[turnData.Ai] -= (int)currTurnEvent[3];
+                            turnData.Moneys[turnData.Ai] -= Convert.ToInt32(currTurnEvent[3]);
                             break;
 
                         case 9: // 流拍
-                            turnData.Ai = (int)currTurnEvent[2];
+                            turnData.Ai = Convert.ToInt32(currTurnEvent[2]);
 
                             // 准备event
-                            x = (int)((object[])currTurnEvent[1])[0];
-                            y = (int)((object[])currTurnEvent[1])[1];
+                            x = Convert.ToInt32((currTurnEvent[1] as JArray)[0]);
+                            y = Convert.ToInt32((currTurnEvent[1] as JArray)[1]);
                             var bidFailureEvent = new BidResultEvent()
                             {
                                 Position = new Point(x, y),
@@ -328,25 +329,6 @@ namespace GameData
                     throw new Exception("该变量值不在枚举范围内！");
             }
         }
-
-        //// 对每一回合的事件按编号排序的函数
-        //public object[ ][ ] AscendingOrder(object[ ][ ] array)
-        //{
-        //    int size = array.GetLength(0);
-        //    for(int i = 0; i < size; i++)
-        //    {
-        //        for(int j = 0; j < size - i; j++)
-        //        {
-        //            if((int)((object[])array[j])[0] > (int)((object[])array[j + 1])[0])
-        //            {
-        //                object[] tmp = array[j];
-        //                array[j] = array[j + 1];
-        //                array[j + 1] = tmp;
-        //            }
-        //        }
-        //    }
-        //    return array;
-        //}
 
         public StartData GetStartData()
         {
@@ -418,7 +400,7 @@ namespace GameData
         [DataMember(Order = 16)]
         public int[] moneys = new int[2];
     }
-
+    
     [DataContract]
     public class JSONData
     {
@@ -426,6 +408,6 @@ namespace GameData
         public JSONSettings settings;
 
         [DataMember(Order = 1)]
-        public Object[][][] events;
+        public object[][][] events;
     }
 }
