@@ -1,4 +1,5 @@
 ﻿using System;
+using GameData;
 using GameData.MapElement;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -13,8 +14,17 @@ namespace Tests {
             CopyFeature();
             Other();
             Debug.Log("Test TestGameDataSource passed");
+            ExampleData();
+            Debug.Log("Test GameDataSource passed");
         }
 
+        public void ExampleData()
+        {
+            var dt = new GameDataSource();
+            dt.ReadFile("播放文件示例.json");
+            var qwqc = 1;
+        }
+        
         public void Generate()
         {
             ds = new TestGameDataSource();
