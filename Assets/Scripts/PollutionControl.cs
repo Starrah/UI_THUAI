@@ -80,7 +80,6 @@ public class PollutionControl : AGameObjectControl<PollutionSource, PollutionCon
             if (element.Visible[GameControl.Instance.MyAi]) status = StatusEnum.DETECTED;
             else status = StatusEnum.NOTDETECTED;
         }
-
-        if (status != ModelStatus) SetModelStatus(status, element, true);
+        SetModelStatus(status, element, true);
     }
 }
