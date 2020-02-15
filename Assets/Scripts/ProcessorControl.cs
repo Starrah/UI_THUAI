@@ -1,4 +1,5 @@
-﻿using GameData.MapElement;
+﻿using System;
+using GameData.MapElement;
 using UnityEngine;
 
 public class ProcessorControl : AGameObjectControl<Processor, ProcessorControl.StatusEnum> {
@@ -16,7 +17,7 @@ public class ProcessorControl : AGameObjectControl<Processor, ProcessorControl.S
     }
 
     public override void SetModelStatus(StatusEnum value, Processor element, bool noAnimation = true){
-        var Animation = GetComponent<Animation>();
+        var Animation = GetComponentInChildren<Animation>();
         if (!noAnimation)
             Animation.Play("in");
         Animation.PlayQueued("idle", QueueMode.CompleteOthers);
@@ -32,4 +33,5 @@ public class ProcessorControl : AGameObjectControl<Processor, ProcessorControl.S
     public override void SyncMapElementStatus(Processor element){
         if (ModelStatus != StatusEnum.NORMAL) SetModelStatus(StatusEnum.NORMAL, element, true);
     }
+
 }

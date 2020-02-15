@@ -37,12 +37,9 @@ public class Scan : MonoBehaviour {
     private static readonly int _Blocked = Shader.PropertyToID("_Blocked");
     private static readonly int _Color = Shader.PropertyToID("_Color");
 
-    // Start is called before the first frame update
     public void cloneMaterial(){
         material = new Material(GetComponent<MeshRenderer>().material);
         GetComponent<MeshRenderer>().material = material;
     }
-
-    // Update is called once per frame
-    void Update(){ }
+    
 }
