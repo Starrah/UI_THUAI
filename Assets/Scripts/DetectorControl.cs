@@ -28,7 +28,10 @@ public class DetectorControl : AGameObjectControl<Detector, DetectorControl.Stat
         // var position = transform.position;
         // position = new Vector3(position.x, .01f, position.z);
         // transform1.position = position;
-        scan.transform.localPosition = new Vector3(0, -.99f, 0);
+        var position = transform.position;
+        var transform1 = scan.transform;
+        transform1.position = new Vector3(position.x, .01f, position.z);
+        transform1.localScale *= 1 / .8f;
         scan.cloneMaterial();
     }
 
