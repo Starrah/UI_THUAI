@@ -14,7 +14,6 @@ using Vector2 = System.Numerics.Vector2;
 public class TestGameDataSource: GameDataSource
 {
     
-
     public new void ReadFile(string fileName)
     {
         _startData = new StartData {MapHeight = 3, MapWidth = 3, Map = new MapPlace[3][], 
