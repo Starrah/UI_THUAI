@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GameData;
@@ -50,22 +51,22 @@ public class MinimapCameraControl : MonoBehaviour {
     void Update(){
         //获取相机四个角的射线
         var transform1 = mainCamera.transform;
-        var fieldOfView = _mainCamera.fieldOfView / 2;
+        var alpha = Mathf.Deg2Rad * _mainCamera.fieldOfView / 2;
         var height = transform1.position.y;
         //targets是相机视图四个角的坐标，地图区域映射到0~1之间
-        var list = new List<Vector2>();
-        foreach (var d1 in new[]{-1, 1})
-            foreach (var d2 in new[]{-1, 1}){
-                var vector3 =
-                    Quaternion.Euler(fieldOfView * d1, 0, 0) *
-                    Quaternion.Euler(0, fieldOfView * d2, 0) * transform1.forward;
-                var target =
-                    new Ray(transform1.position, vector3).GetPoint(
-                        height / Mathf.Cos(Vector3.Angle(Vector3.down, vector3) * Mathf.PI / 180));
-                list.Add(new Vector2(target.x, target.z) / Mathf.Max(StageRect.width, StageRect.height));
-            }
-
-        var targets = list.ToArray();
+        var gamma = Mathf.Atan(Mathf.Sin(alpha));
+        var d = Quaternion.AngleAxis(gamma * Mathf.Rad2Deg, Vector3.forward) * Vector3.down;
+        List<Vector2> list = new List<Vector2>();
+        foreach (var i in new[]{0, 1, 2, 3}){
+            var direction = Quaternion.AngleAxis(i * 90, transform1.forward) * d;
+            Ray ray = new Ray(transform1.position, direction);
+            float distance = height / Mathf.Cos(Mathf.Deg2Rad * Vector3.Angle(Vector3.down, direction));
+            var target3 = ray.GetPoint(distance);
+            var unknown = new Vector2(target3.x, target3.z);
+            list.Add(unknown / Mathf.Max(StageRect.width, StageRect.height));
+        }
+        var targets =
+            list.ToArray();
         var targetTexture = _camera.targetTexture;
 
         var texture2D = new Texture2D(targetTexture.width, targetTexture.height, targetTexture.graphicsFormat,
@@ -79,9 +80,9 @@ public class MinimapCameraControl : MonoBehaviour {
         }
 
         drawLine(texture2D, targets[0], targets[1], Color.green);
-        drawLine(texture2D, targets[1], targets[3], Color.green);
-        drawLine(texture2D, targets[3], targets[2], Color.green);
-        drawLine(texture2D, targets[2], targets[0], Color.green);
+        drawLine(texture2D, targets[1], targets[2], Color.green);
+        drawLine(texture2D, targets[2], targets[3], Color.green);
+        drawLine(texture2D, targets[3], targets[0], Color.green);
         texture2D.Apply();
 
         //小地图放大

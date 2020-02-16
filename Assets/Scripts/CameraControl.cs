@@ -80,5 +80,7 @@ public class CameraControl : MonoBehaviour {
 
     private void Start(){
         _camera = GetComponent<Camera>();
+        var startData = GameControl.Instance.DataSource.GetStartData();
+        StageRect = new Rect(0, 0, startData.MapWidth, startData.MapHeight);
     }
 }
