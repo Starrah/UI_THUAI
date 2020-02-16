@@ -48,9 +48,4 @@ public class Glowing : MonoBehaviour {
         tempCam = new GameObject().AddComponent<Camera>();
         tempCam.enabled = false;
     }
-
-    // Update is called once per frame
-    void Update() {
-
-    }
 }

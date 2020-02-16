@@ -105,46 +105,63 @@ public class GameControl : MonoBehaviour
     }
     // Start is called before the first frame update
     
+    private Dictionary<string, GameObject> _prefabs = new Dictionary<string, GameObject>();
+
+    void Awake()
+    {
+        Instance = GameObject.Find("GameControl").GetComponent<GameControl>();
+        
+        DataSource = new TestGameDataSource();
+        DataSource.ReadFile("");
+        
+        //TODO MyAi问题
+        MyAi = 0;   
+    }
+
     void Start()
     {
-        DataSource = new TestGameDataSource();
-        Instance = GameObject.Find("GameControl").GetComponent<GameControl>();
+        _prefabs["Dirt"] = Resources.Load<GameObject>("Prefabs/Dirt");
+        _prefabs["Pollution"] = Resources.Load<GameObject>("Prefabs/Pollution");
+        _prefabs["Building"] = Resources.Load<GameObject>("Prefabs/Building");
+        _prefabs["Processor"] = Resources.Load<GameObject>("Prefabs/Processor");
+        _prefabs["Detector"] = Resources.Load<GameObject>("Prefabs/Detector");
 
         var startData = DataSource.GetStartData();
         for (int x = 0; x < startData.MapWidth; x++)
         {
             for (int y = 0; y < startData.MapHeight; y++)
             {
+                var dirtObj = Instantiate(_prefabs["Dirt"]);
+                var dirtControl = dirtObj.GetComponent<DirtControl>();
+                dirtControl.Place = startData.Map[x][y];
+                dirtObj.transform.position = new Vector3(x, dirtObj.transform.position.y, y);
+                continue;
                 foreach (MapElementBase element in startData.Map[x][y].Elements)
                 {
                     GameObject obj = null;
                     if (element is PollutionSource ele1)
                     {
-                        var control = Resources.Load<PollutionControl>("Prefabs/Pollution");
-                        obj = control.gameObject;
+                        obj = Instantiate(_prefabs["Pollution"]);
+                        var control = obj.GetComponent<PollutionControl>();
                         control.SyncMapElementStatus(ele1);
                     }else if (element is Building ele2)
                     {
-                        var control = Resources.Load<BuildingControl>("Prefabs/Building");
-                        obj = control.gameObject;
+                        obj = Instantiate(_prefabs["Building"]);
+                        var control = obj.GetComponent<BuildingControl>();
                         control.SyncMapElementStatus(ele2);
                     }else if (element is Detector ele3)
                     {
-                        var control = Resources.Load<DetectorControl>("Prefabs/Detector");
-                        obj = control.gameObject;
+                        obj = Instantiate(_prefabs["Detector"]);
+                        var control = obj.GetComponent<DetectorControl>();
                         control.SyncMapElementStatus(ele3);
                     }else if (element is Processor ele4)
                     {
-                        var control = Resources.Load<ProcessorControl>("Prefabs/Processor");
-                        obj = control.gameObject;
+                        obj = Instantiate(_prefabs["Processor"]);
+                        var control = obj.GetComponent<ProcessorControl>();
                         control.SyncMapElementStatus(ele4);
                     }
-
-                    var pos = obj.transform.position;
-                    pos.x = x;
-                    pos.z = y;
-                    obj.transform.position = pos;
-                    
+                    else throw new Exception("非法element");
+                    obj.transform.position = new Vector3(x, obj.transform.position.y, y);
                 }
             }
         }

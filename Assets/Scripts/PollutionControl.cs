@@ -14,18 +14,18 @@ public class PollutionControl : AGameObjectControl<PollutionSource, PollutionCon
     public override StatusEnum ModelStatus{ get; protected set; } = StatusEnum.NOTDETECTED;
 
     #region 模型相关参数
-    private MeshRenderer[] Glows;
-    private MeshRenderer Bottom;
+    public MeshRenderer[] Glows;
+    public MeshRenderer Bottom;
     private static readonly Color[] colors = {Color.black, Color.red, Color.blue};
     private static readonly int _Color = Shader.PropertyToID("_Color");
 
     private void Start(){
         #region 初始化模型有关参数
-        var renders = GetComponentsInChildren<MeshRenderer>().AsQueryable();
-        Glows = renders
-            .Where(meshRenderer => !meshRenderer.gameObject.name.Contains("Bottom"))
-            .ToArray();
-        Bottom = renders.Single(meshRenderer => meshRenderer.gameObject.name.Contains("Bottom"));
+        // var renders = GetComponentsInChildren<MeshRenderer>().AsQueryable();
+        // Glows = renders
+            // .Where(meshRenderer => !meshRenderer.gameObject.name.Contains("Bottom"))
+            // .ToArray();
+        // Bottom = renders.Single(meshRenderer => meshRenderer.gameObject.name.Contains("Bottom"));
         #endregion
     }
 
@@ -63,8 +63,6 @@ public class PollutionControl : AGameObjectControl<PollutionSource, PollutionCon
     #region 状态改变事件处理
     private PollutionSource _pollutionSource;
 
-    
-    
     public override void SetModelStatus(StatusEnum value, PollutionSource element, bool noAnimation = true){
         ModelStatus = value;
         StartCoroutine(changeMaterial(colors[(int) value], noAnimation ? 0 : .5f));
