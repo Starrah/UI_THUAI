@@ -30,6 +30,7 @@ public class ProcessorControl : AGameObjectControl<Processor, ProcessorControl.S
         scan.transform.position = new Vector3(position.x, .01f, position.z);
         scan.cloneMaterial();
         var color = element.Owner == 0 ? Color.red : Color.blue;
+        color -= new Color(0, 0, 0, .3f);
         scan.ScanColor = color;
         foreach (var material in transform.GetComponentsInChildren<MeshRenderer>().AsQueryable()
             .Select(r => r.material)

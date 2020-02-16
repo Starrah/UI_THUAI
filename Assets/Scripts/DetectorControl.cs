@@ -36,6 +36,7 @@ public class DetectorControl : AGameObjectControl<Detector, DetectorControl.Stat
         transform1.localScale *= 1 / .8f;
         scan.cloneMaterial();
         var color = element.Owner == 0 ? Color.red : Color.blue;
+        color -= new Color(0, 0, 0, .3f);
         scan.ScanColor = color;
         foreach (var material in transform.GetComponentsInChildren<MeshRenderer>().AsQueryable()
             .Select(r => r.material)
