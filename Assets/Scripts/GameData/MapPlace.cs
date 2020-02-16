@@ -10,7 +10,7 @@ namespace GameData
     public class MapPlace
     {
         public Point Position;
-        public MapPlaceTypes Type = MapPlaceTypes.CANNOT_BUY;//类型
+        public MapPlaceTypes Type = MapPlaceTypes.EMPTY;//类型
         public int Owner = -1;//所有者，若无人所有就是-1，否则是0或1
         public BidInfo Bid = null;//当前的出价信息。流拍后或卖出后，需要一直保留着最后一次的出价信息。
         public List<MapElementBase> Elements = new List<MapElementBase>();

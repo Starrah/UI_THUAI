@@ -22,7 +22,6 @@ namespace Tests {
         {
             var dt = new GameDataSource();
             dt.ReadFile("播放文件示例.json");
-            var qwqc = 1;
         }
         
         public void Generate()
@@ -41,7 +40,7 @@ namespace Tests {
                 ds.GetTurnData(1);
                 Assert.IsTrue(false);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Assert.IsTrue(true);
             }

@@ -10,7 +10,7 @@ using UnityEngine;
  * 以减少控制器与GameControl中回合切换控制代码的耦合程度。
  *
  * 注：第一阶段开发中，ModelStatus、SyncMapElementStatus由 @Starrah 实现，
- * SyncMapElementStatus由 @Rika 实现。
+ * SetModelStatus由 @Rika 实现。
  */
 public abstract class AGameObjectControl<T, T2>: MonoBehaviour
     where T: MapElementBase//地图元素类型
