@@ -149,17 +149,107 @@ public class GameControl : MonoBehaviour
         }
     }
 
+    private void ChangeAPlace(MapPlace mapPlace)
+    {
+        List<GameObject> oldObjs = _gameMap[mapPlace.Position.x][mapPlace.Position.y];
+        List<GameObject> newObjs = new List<GameObject>();
+        
+        var dirtControl = FindMapObject<DirtControl>(mapPlace.Position);
+        oldObjs.Remove(dirtControl.gameObject);
+        newObjs.Add(dirtControl.gameObject);
+        dirtControl.Place = mapPlace;
+        foreach (MapElementBase element in mapPlace.Elements)
+        {
+            GameObject obj = null;
+            if (element is PollutionSource ele1)
+            {
+                var control = FindMapObject<PollutionControl>(mapPlace.Position);
+                if (control != null)
+                {
+                    obj = control.gameObject;
+                    oldObjs.Remove(obj);
+                }
+                else
+                {
+                    obj = Instantiate(_prefabs["Pollution"]);
+                    control = obj.GetComponent<PollutionControl>();
+                }
+                control.SyncMapElementStatus(ele1);
+            }
+            else if (element is Building ele2)
+            {
+                var control = FindMapObject<BuildingControl>(mapPlace.Position);
+                if (control != null)
+                {
+                    obj = control.gameObject;
+                    oldObjs.Remove(obj);
+                }
+                else
+                {
+                    obj = Instantiate(_prefabs["Building"]);
+                    control = obj.GetComponent<BuildingControl>();
+                }
+                control.SyncMapElementStatus(ele2);
+            }
+            else if (element is Detector ele3)
+            {
+                
+                var control = FindMapObject<DetectorControl>(mapPlace.Position);
+                if (control != null)
+                {
+                    obj = control.gameObject;
+                    oldObjs.Remove(obj);
+                }
+                else
+                {
+                    obj = Instantiate(_prefabs["Detector"]);
+                    control = obj.GetComponent<DetectorControl>();
+                }
+                control.SyncMapElementStatus(ele3);
+            }
+            else if (element is Processor ele4)
+            {
+                var control = FindMapObject<ProcessorControl>(mapPlace.Position);
+                if (control != null)
+                {
+                    obj = control.gameObject;
+                    oldObjs.Remove(obj);
+                }
+                else
+                {
+                    obj = Instantiate(_prefabs["Processor"]);
+                    control = obj.GetComponent<ProcessorControl>();
+                }
+                control.SyncMapElementStatus(ele4);
+            }
+            else throw new Exception("非法element");
+            
+            newObjs.Add(obj);
+        }
+        
+        foreach (GameObject oldObj in oldObjs)
+        {
+            Destroy(oldObj);
+        }
+        _gameMap[mapPlace.Position.x][mapPlace.Position.y] = newObjs;
+    }
+    
     /**
      * 直接改变游戏的回合状态。不会播放任何过渡动画。
      * 常用于玩家直接改变当前播放回合的情况，播放器控制部分直接调用本函数即可。
      */
-    void ChangeTurn(int turn)
+    public void ChangeTurn(int turn)
     {
         CurrentTurn = turn;
         _time = 0;
         var turnData = DataSource.GetTurnData(CurrentTurn);
-        //TODO 播放事件动画（可能的物体实例化和析构）
-        //全图遍历、1.修改可复用对象的状况，2.删除多余对象。3.添加新加入的对象
+        for (int x = 0; x < turnData.Map.Length; x++)
+        {
+            for (int y = 0; y < turnData.Map[x].Length; y++)
+            {
+                ChangeAPlace(turnData.Map[x][y]);
+            }
+        }
     }
     // Start is called before the first frame update
     
@@ -194,7 +284,6 @@ public class GameControl : MonoBehaviour
             for (int y = 0; y < startData.MapHeight; y++)
             {
                 _gameMap[x][y] = new List<GameObject>();
-                
                 var dirtObj = Instantiate(_prefabs["Dirt"]);
                 var dirtControl = dirtObj.GetComponent<DirtControl>();
                 dirtControl.Place = startData.Map[x][y];
@@ -251,6 +340,11 @@ public class GameControl : MonoBehaviour
         {
             Debug.Log(KeyCode.P);
             PlaySpeed /= 1.5f;
+        }
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            Debug.Log(KeyCode.L);
+            ChangeTurn(CurrentTurn - 5 >= 0? CurrentTurn - 5 : 0);
         }
         _time += Time.deltaTime;
         var turns = (int)Math.Floor(_time / (_standardTimePerTurn / PlaySpeed));
