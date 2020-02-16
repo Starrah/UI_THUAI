@@ -35,6 +35,7 @@ public class ProcessorControl : AGameObjectControl<Processor, ProcessorControl.S
             .Select(r => r.material)
             .Where(m => m.name.Contains("mat")))
             material.color = color;
+        GetComponent<MapPanel>().setStatus(element);
     }
 
     public override void SyncMapElementStatus(Processor element){

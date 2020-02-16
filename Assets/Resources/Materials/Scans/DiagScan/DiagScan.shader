@@ -1,4 +1,4 @@
-﻿Shader "Custom/SquareScan"
+﻿Shader "Custom/DiagScan"
 {
     Properties
     {

@@ -41,6 +41,8 @@ public class DetectorControl : AGameObjectControl<Detector, DetectorControl.Stat
             .Select(r => r.material)
             .Where(m => m.name.Contains("材质")))
             material.color = color;
+        GetComponent<MapPanel>().setStatus(element);
+        
     }
 
     public override void SyncMapElementStatus(Detector element){
