@@ -35,6 +35,7 @@
         {
             RangeType = DeviceRangeTypes.SQUARE, Owner = 0
         });
+        _startData.Map[6][6].Elements.Add(new Processor(new Point(6,6)){Owner = 0});
 
         //处理每回合事件的方式，可以写成一个复杂的if判断和循环：
         //step 1：深拷贝整张地图（从上一回合的地图拷贝）

@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using GameData;
+using GameData.GameEvents;
 using GameData.MapElement;
 using UnityEngine;
 
@@ -22,13 +25,29 @@ public class GameControl : MonoBehaviour
      * 当前的播放状态，true为播放中、false为已暂停。
      * 播放器控制部分可直接改变此属性的值。
      */
-    public bool IsPlaying { get; set; } = false;
+    public bool IsPlaying
+    {
+        get => _isPlaying;
+        set
+        {
+            _isPlaying = value;
+            _time = 0.0f;
+        }
+    }
 
     /**
      * 游戏的播放速度。播放器控制部分可直接改变此属性的值。
      */
-    public float PlaySpeed { get; set; } = 1.0f;
-    
+    public float PlaySpeed
+    {
+        get => _playSpeed;
+        set
+        {
+            _time = 0.0f;
+            _playSpeed = value;
+        }
+    }
+
     /**
      * 我的阵营编号
      */
@@ -37,9 +56,9 @@ public class GameControl : MonoBehaviour
     //私有变量部分
     private List<GameObject>[][] _gameMap;
     private float _time = 0.0f;
-    private float _standardTimePerTurn = 0.5f;
+    private float _standardTimePerTurn = 1.0f;
     private int _currentTurn = -1;
-    
+
     /**
      * getter用于获得当前的回合数。
      * setter是private的，如需设置回合请调用nextTurn或ChangeTurn接口。
@@ -49,11 +68,7 @@ public class GameControl : MonoBehaviour
     public int CurrentTurn
     {
         get => _currentTurn;
-        private set
-        {
-            _currentTurn = value;
-            //TODO 通知UI刷新当前回合数的指示
-        }
+        private set => _currentTurn = value;
     }
     
     /**
@@ -79,16 +94,59 @@ public class GameControl : MonoBehaviour
      * 播放器控制部分在播放过程中其实不需要调用这个函数，
      * 本类会在播放状态为播放中的时候、根据设定的播放倍率自动的调用这个函数的。
      */
-    public void NextTurn()
+    public IEnumerator NextTurn()
     {
         CurrentTurn++;
         if (CurrentTurn >= DataSource.GetStartData().ActualRoundNum)
         {
             gameEnd();
-            return;
+            yield break;
         }
         var turnData = DataSource.GetTurnData(CurrentTurn);
-        //TODO 播放事件动画（可能的物体实例化和析构）
+        Debug.Log("Turn " + CurrentTurn + ", Speed " + PlaySpeed + ", Interval " + _standardTimePerTurn / PlaySpeed);
+        foreach (GameEventBase eventBase in turnData.Events)
+        {
+            if (eventBase is NewBidEvent || eventBase is BidResultEvent)
+            {
+                var obj = FindMapObject<DirtControl>(eventBase.Position);
+                obj.Place = eventBase.GetPlace(turnData.Map);
+            }
+            else if (eventBase is PutProcessorEvent evep)
+            {
+                var obj = Instantiate(_prefabs["Processor"]);
+                obj.transform.position = new Vector3(evep.Position.x, obj.transform.position.y, evep.Position.y);
+                _gameMap[evep.Position.x][evep.Position.y].Add(obj);
+                obj.GetComponent<ProcessorControl>()
+                    .SetModelStatus(ProcessorControl.StatusEnum.NORMAL, evep.Processor, false);
+                foreach (var one in evep.Result)
+                {
+                    var pls = FindMapObject<PollutionControl>(one.Item1.Position);
+                    pls.SetModelStatus(PollutionControl.StatusEnum.PROCESSED, one.Item1, false);
+                }
+            }
+            else if (eventBase is PutDetectorEvent eved)
+            {
+                var obj = Instantiate(_prefabs["Detector"]);
+                obj.transform.position = new Vector3(eved.Position.x, obj.transform.position.y, eved.Position.y);
+                _gameMap[eved.Position.x][eved.Position.y].Add(obj);
+                obj.GetComponent<DetectorControl>()
+                    .SetModelStatus(DetectorControl.StatusEnum.NORMAL, eved.Detector, false);
+                foreach (var one in eved.Result)
+                {
+                    var pls = FindMapObject<PollutionControl>(one.Position);
+                    pls.SetModelStatus(PollutionControl.StatusEnum.DETECTED, one, false);
+                }
+            }
+            else if (eventBase is TipsterEvent evet)
+            {
+                if(evet.Result != null)
+                {
+                    var pollutionSource = turnData.Map[evet.Result.x][evet.Result.y].GetElement<PollutionSource>();
+                    var pls = FindMapObject<PollutionControl>(pollutionSource.Position);
+                    pls.SetModelStatus(PollutionControl.StatusEnum.DETECTED, pollutionSource, false);   
+                }
+            }
+        }
     }
 
     /**
@@ -106,13 +164,15 @@ public class GameControl : MonoBehaviour
     // Start is called before the first frame update
     
     private Dictionary<string, GameObject> _prefabs = new Dictionary<string, GameObject>();
+    private bool _isPlaying = false;
+    private float _playSpeed = 1.0f;
 
     void Awake()
     {
         Instance = GameObject.Find("GameControl").GetComponent<GameControl>();
         
-        DataSource = new TestGameDataSource();
-        DataSource.ReadFile("");
+        DataSource = new GameDataSource();
+        DataSource.ReadFile("播放文件示例.json");
         
         //TODO MyAi问题
         MyAi = 0;   
@@ -127,15 +187,19 @@ public class GameControl : MonoBehaviour
         _prefabs["Detector"] = Resources.Load<GameObject>("Prefabs/Detector");
 
         var startData = DataSource.GetStartData();
+        _gameMap = new List<GameObject>[startData.MapWidth][];
         for (int x = 0; x < startData.MapWidth; x++)
         {
+            _gameMap[x] = new List<GameObject>[startData.MapHeight];
             for (int y = 0; y < startData.MapHeight; y++)
             {
+                _gameMap[x][y] = new List<GameObject>();
+                
                 var dirtObj = Instantiate(_prefabs["Dirt"]);
                 var dirtControl = dirtObj.GetComponent<DirtControl>();
                 dirtControl.Place = startData.Map[x][y];
                 dirtObj.transform.position = new Vector3(x, dirtObj.transform.position.y, y);
-                continue;
+                _gameMap[x][y].Add(dirtObj);
                 foreach (MapElementBase element in startData.Map[x][y].Elements)
                 {
                     GameObject obj = null;
@@ -161,6 +225,7 @@ public class GameControl : MonoBehaviour
                         control.SyncMapElementStatus(ele4);
                     }
                     else throw new Exception("非法element");
+                    _gameMap[x][y].Add(obj);
                     obj.transform.position = new Vector3(x, obj.transform.position.y, y);
                 }
             }
@@ -170,11 +235,28 @@ public class GameControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Space)) IsPlaying = !IsPlaying;
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            Debug.Log("I");
+            var qwq = FindMapObject<PollutionControl>(new Point(0, 3));
+            qwq.SetModelStatus(PollutionControl.StatusEnum.PROCESSED, null, false);
+        }
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            Debug.Log(KeyCode.O);
+            PlaySpeed *= 1.5f;
+        }
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            Debug.Log(KeyCode.P);
+            PlaySpeed /= 1.5f;
+        }
         _time += Time.deltaTime;
-        var turns = (int)Math.Floor(_time / _standardTimePerTurn);
+        var turns = (int)Math.Floor(_time / (_standardTimePerTurn / PlaySpeed));
         for (var i = 0; i < turns; i++)
-            NextTurn();
-        _time -= turns * _standardTimePerTurn;
+            StartCoroutine(NextTurn());
+        _time -= turns * (_standardTimePerTurn / PlaySpeed);
     } 
     
     /**
@@ -182,8 +264,8 @@ public class GameControl : MonoBehaviour
      */
     public int[] GetMoneys()
     {
-        //TODO
-        return new int[] {0, 0};
+        if (CurrentTurn == -1) return DataSource.GetStartData().Moneys;
+        else return DataSource.GetTurnData(CurrentTurn).Moneys;
     }
     
     /**
@@ -191,7 +273,7 @@ public class GameControl : MonoBehaviour
      */
     public int[] GetScores()
     {
-        //TODO
-        return new int[] {0, 0};
+        if (CurrentTurn == -1) return DataSource.GetStartData().Scores;
+        else return DataSource.GetTurnData(CurrentTurn).Scores;
     }
 }

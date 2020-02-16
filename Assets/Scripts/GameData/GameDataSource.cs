@@ -1,13 +1,13 @@
 ﻿using System;﻿
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.IO;
 using System.Runtime.Serialization;
 using GameData.GameEvents;
 using GameData.MapElement;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using UnityEngine;
 
 namespace GameData
 {
@@ -19,12 +19,14 @@ namespace GameData
         */
         public virtual void ReadFile(string fileName)
         {
+            long startTime = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
+            
             // 读取JSON文件并解析
             string playFileContent = File.ReadAllText(fileName);
             JsonSerializer serializer = new JsonSerializer();
             StringReader sr = new StringReader(playFileContent);
             JSONData updateInfo = serializer.Deserialize<JSONData>(new JsonTextReader(sr));
-            
+            long midTime = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
 
             _startData = new StartData
             {
@@ -59,6 +61,7 @@ namespace GameData
                 int x = updateInfo.settings.buildings[i, 0];
                 int y = updateInfo.settings.buildings[i, 1];
                 _startData.Map[x][y].Elements.Add(new Building(new Point(x, y)));
+                _startData.Map[x][y].Type = MapPlaceTypes.CANNOT_BUY;
             } // 加入建筑物数据
 
             for (int x = 0; x < _startData.MapWidth; x++)
@@ -253,7 +256,7 @@ namespace GameData
                             // 修改event
                             x = Convert.ToInt32((currTurnEvent[2] as JArray)[0]);
                             y = Convert.ToInt32((currTurnEvent[2] as JArray)[1]);
-                            detectorEvent.Result.Add(new PollutionSource(new Point(x, y)));
+                            detectorEvent.Result.Add(turnData.Map[x][y].GetElement<PollutionSource>());
 
                             // 修改地图
                             turnData.Map[x][y].GetElement<PollutionSource>().Visible[turnData.Ai] = true;
@@ -276,6 +279,8 @@ namespace GameData
                             turnData.Events.Add(bidSuccessEvent);
 
                             // 修改金钱
+                            turnData.Map[x][y].Type = MapPlaceTypes.BOUGHT;
+                            turnData.Map[x][y].Owner = turnData.Ai;
                             turnData.Moneys[turnData.Ai] -= Convert.ToInt32(currTurnEvent[3]);
                             break;
 
@@ -291,6 +296,8 @@ namespace GameData
                                 Success = false
                             };
                             turnData.Events.Add(bidFailureEvent);
+                            
+                            turnData.Map[x][y].Type = MapPlaceTypes.BOUGHT_FAILED;
                             break;
                         
                         default:
@@ -313,6 +320,9 @@ namespace GameData
 
                 _turnData.Add(turnData);
             }
+            
+            long endTime = (long)(DateTime.Now - new System.DateTime(1970, 1, 1)).TotalMilliseconds;
+            Debug.Log("GameDataSource: Reading File Cost " + (endTime-startTime) + "ms (in which JSON parsing "+ (midTime-startTime) +"ms)");
         }
 
         public DeviceRangeTypes IntToDeviceType(int x)
