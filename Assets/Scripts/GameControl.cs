@@ -88,6 +88,8 @@ public class GameControl : MonoBehaviour
     {
         //TODO    
     }
+
+    public event Action AfterNextTurnEvent;
     
     /**
      * 使游戏切换到下一回合，并正常播放动画。
@@ -147,6 +149,7 @@ public class GameControl : MonoBehaviour
                 }
             }
         }
+        AfterNextTurnEvent?.Invoke();
     }
 
     /**

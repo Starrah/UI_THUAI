@@ -20,6 +20,14 @@ public class DirtControl : MonoBehaviour {
         }
     }
 
+    private void updateBidTurn(){
+        if (_place.Type != MapPlaceTypes.EMPTY)
+            GameControl.Instance.AfterNextTurnEvent -= updateBidTurn;
+        else
+            GetComponentInChildren<TextMeshPro>().text =
+                (GameControl.Instance.CurrentTurn - _place.Bid.turn).ToString();
+    }
+
     public MapPlace Place {
         get => _place;
         set {
@@ -37,9 +45,8 @@ public class DirtControl : MonoBehaviour {
                             Instantiate(Resources.Load<TextMeshPro>("Materials/Dirt/Num"), transform);
                         tmp = GetComponentInChildren<TextMeshPro>();
                         var qwq = GameControl.Instance.CurrentTurn;
-                        var wqq = qwq - value.Bid.turn;
-                        tmp.text = wqq.ToString();
                         tmp.color = new Color(value.Bid.Ai == 0 ? 1 : 0, 0, value.Bid.Ai == 1 ? 1 : 0, .5f);
+                        GameControl.Instance.AfterNextTurnEvent += updateBidTurn;
                         break;
                     case MapPlaceTypes.BOUGHT_FAILED:
                         if (GetComponentInChildren<TextMeshPro>() is null)
