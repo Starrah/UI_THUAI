@@ -27,6 +27,7 @@ public class DirtControl : MonoBehaviour {
             transform.position = new Vector3(value.Position.x, 0, value.Position.y);
             //如果出价状态非空（即至少进入拍卖环节
             if (!(value.Bid is null)){
+                TextMeshPro tmp;
                 switch (value.Type){
                     case MapPlaceTypes.CANNOT_BUY:
                         break;
@@ -34,8 +35,10 @@ public class DirtControl : MonoBehaviour {
                         //如果还没拍成
                         if (GetComponentInChildren<TextMeshPro>() is null)
                             Instantiate(Resources.Load<TextMeshPro>("Materials/Dirt/Num"), transform);
-                        var tmp = GetComponentInChildren<TextMeshPro>();
-                        tmp.text = value.Bid.turn.ToString();
+                        tmp = GetComponentInChildren<TextMeshPro>();
+                        var qwq = GameControl.Instance.CurrentTurn;
+                        var wqq = qwq - value.Bid.turn;
+                        tmp.text = wqq.ToString();
                         tmp.color = new Color(value.Bid.Ai == 0 ? 1 : 0, 0, value.Bid.Ai == 1 ? 1 : 0, .5f);
                         break;
                     case MapPlaceTypes.BOUGHT_FAILED:
