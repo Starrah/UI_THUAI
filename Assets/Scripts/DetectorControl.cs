@@ -1,4 +1,6 @@
-﻿using GameData.MapElement;
+﻿using System.Collections.Generic;
+using System.Linq;
+using GameData.MapElement;
 using UnityEngine;
 
 public class DetectorControl : AGameObjectControl<Detector, DetectorControl.StatusEnum> {
@@ -33,6 +35,12 @@ public class DetectorControl : AGameObjectControl<Detector, DetectorControl.Stat
         transform1.position = new Vector3(position.x, .01f, position.z);
         transform1.localScale *= 1 / .8f;
         scan.cloneMaterial();
+        var color = element.Owner == 0 ? Color.red : Color.blue;
+        scan.ScanColor = color;
+        foreach (var material in transform.GetComponentsInChildren<MeshRenderer>().AsQueryable()
+            .Select(r => r.material)
+            .Where(m => m.name.Contains("材质")))
+            material.color = color;
     }
 
     public override void SyncMapElementStatus(Detector element){

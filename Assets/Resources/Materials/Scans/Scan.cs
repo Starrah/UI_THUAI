@@ -37,9 +37,10 @@ public class Scan : MonoBehaviour {
     private static readonly int _Blocked = Shader.PropertyToID("_Blocked");
     private static readonly int _Color = Shader.PropertyToID("_Color");
 
-    public void cloneMaterial(){
+    public Material cloneMaterial(){
         material = new Material(GetComponent<MeshRenderer>().material);
         GetComponent<MeshRenderer>().material = material;
+        return material;
     }
     
 }

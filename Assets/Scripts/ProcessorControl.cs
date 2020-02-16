@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using GameData.MapElement;
 using UnityEngine;
 
@@ -28,6 +29,12 @@ public class ProcessorControl : AGameObjectControl<Processor, ProcessorControl.S
         // transform1.position = position;
         scan.transform.position = new Vector3(position.x, .01f, position.z);
         scan.cloneMaterial();
+        var color = element.Owner == 0 ? Color.red : Color.blue;
+        scan.ScanColor = color;
+        foreach (var material in transform.GetComponentsInChildren<MeshRenderer>().AsQueryable()
+            .Select(r => r.material)
+            .Where(m => m.name.Contains("mat")))
+            material.color = color;
     }
 
     public override void SyncMapElementStatus(Processor element){
