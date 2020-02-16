@@ -64,7 +64,7 @@ public class MinimapCameraControl : MonoBehaviour {
                 let distance = height / Mathf.Cos(Mathf.Deg2Rad * Vector3.Angle(Vector3.down, direction))
                 select ray.GetPoint(distance)
                 into target3
-                select new Vector2(target3.x, target3.z) / Mathf.Max(StageRect.width, StageRect.height)
+                select (new Vector2(target3.x + .5f, target3.z + .5f)) / Mathf.Max(StageRect.width, StageRect.height)
             ).ToArray();
         var targetTexture = _camera.targetTexture;
 
