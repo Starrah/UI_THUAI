@@ -4,27 +4,33 @@ using GameData.MapElement;
 using UnityEngine;
 using System.Linq;
 
-public class PollutionControl : AGameObjectControl<PollutionSource, PollutionControl.StatusEnum>{
-    public enum StatusEnum{
+public class PollutionControl : AGameObjectControl<PollutionSource, PollutionControl.StatusEnum> {
+    public enum StatusEnum {
         NOTDETECTED, //未探测 
         DETECTED, //已探测
         PROCESSED //已处理
     }
 
-    public override StatusEnum ModelStatus{ get; protected set; } = StatusEnum.NOTDETECTED;
+    public override StatusEnum ModelStatus { get; protected set; } = StatusEnum.NOTDETECTED;
 
     #region 模型相关参数
     public MeshRenderer[] Glows;
     public MeshRenderer Bottom;
-    private static readonly Color[] colors = {Color.black, Color.red, Color.blue};
+
+    private static readonly Color[] colors = {
+        new Color(0, 0, 0, .2f),
+        new Color(0, 0, 0, .5f),
+        new Color(0, 1, 0, .3f),
+    };
+
     private static readonly int _Color = Shader.PropertyToID("_Color");
 
     private void Start(){
         #region 初始化模型有关参数
         // var renders = GetComponentsInChildren<MeshRenderer>().AsQueryable();
         // Glows = renders
-            // .Where(meshRenderer => !meshRenderer.gameObject.name.Contains("Bottom"))
-            // .ToArray();
+        // .Where(meshRenderer => !meshRenderer.gameObject.name.Contains("Bottom"))
+        // .ToArray();
         // Bottom = renders.Single(meshRenderer => meshRenderer.gameObject.name.Contains("Bottom"));
         #endregion
     }
@@ -37,7 +43,7 @@ public class PollutionControl : AGameObjectControl<PollutionSource, PollutionCon
     /// <returns></returns>
     IEnumerator changeMaterial(Color tarC, float fadeDelay = 0){
         var delay = 0f;
-        var initC = Glows[0].material.GetColor(_Color);
+        Color initC = Glows[0].material.GetColor(_Color);
 
         var g = new Material(Glows[0].material);
         var b = new Material(Bottom.material);
@@ -50,12 +56,12 @@ public class PollutionControl : AGameObjectControl<PollutionSource, PollutionCon
                 delay += Time.fixedDeltaTime;
                 var nowC = Color.Lerp(initC, tarC, delay / fadeDelay);
                 g.SetColor(_Color, nowC);
-                b.SetColor(_Color, new Color(nowC.r, nowC.g, nowC.b, .33f));
+                b.SetColor(_Color, new Color(nowC.r, nowC.g, nowC.b, nowC.a / 3));
                 yield return new WaitForEndOfFrame();
             }
         else{
             g.SetColor(_Color, tarC);
-            b.SetColor(_Color, new Color(tarC.r, tarC.g, tarC.b, .33f));
+            b.SetColor(_Color, new Color(tarC.r, tarC.g, tarC.b, tarC.a / 3));
         }
     }
     #endregion
@@ -80,6 +86,7 @@ public class PollutionControl : AGameObjectControl<PollutionSource, PollutionCon
             if (element.Visible[GameControl.Instance.MyAi]) status = StatusEnum.DETECTED;
             else status = StatusEnum.NOTDETECTED;
         }
+
         SetModelStatus(status, element, true);
     }
 }

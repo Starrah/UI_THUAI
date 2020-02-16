@@ -31,7 +31,7 @@ public class MinimapCameraControl : MonoBehaviour {
     }
 
     public void initialize(){
-        transform.position = new Vector3(StageRect.center.x - .5f, 2, StageRect.center.y - .5f);
+        transform.position = new Vector3(StageRect.center.x - .5f, 4, StageRect.center.y - .5f);
         _camera.orthographicSize = Mathf.Max(StageRect.width, StageRect.height) / 2;
     }
 

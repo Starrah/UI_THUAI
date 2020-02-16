@@ -62,7 +62,7 @@ public class MapPanel : MonoBehaviour {
                     ? "Icons/Visible/Visible_Blue"
                     : "Icons/Visible/Invisible_Blue");
                 foreach (var b in v.Components)
-                    Instantiate(ImagePrefab, lines[1].transform).color = b ? Color.red : Color.white;
+                    Instantiate(ImagePrefab, lines[1].transform).color = b ? Color.gray : Color.white;
                 break;
         }
     }
