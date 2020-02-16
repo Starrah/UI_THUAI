@@ -100,7 +100,7 @@ public class GameControl : MonoBehaviour
         if (CurrentTurn >= DataSource.GetStartData().ActualRoundNum)
         {
             gameEnd();
-            return null;
+            yield break;
         }
         var turnData = DataSource.GetTurnData(CurrentTurn);
         Debug.Log("Turn " + CurrentTurn + ", Speed " + PlaySpeed + ", Interval " + _standardTimePerTurn / PlaySpeed);
@@ -114,10 +114,10 @@ public class GameControl : MonoBehaviour
             else if (eventBase is PutProcessorEvent evep)
             {
                 var obj = Instantiate(_prefabs["Processor"]);
+                obj.transform.position = new Vector3(evep.Position.x, obj.transform.position.y, evep.Position.y);
                 _gameMap[evep.Position.x][evep.Position.y].Add(obj);
                 obj.GetComponent<ProcessorControl>()
                     .SetModelStatus(ProcessorControl.StatusEnum.NORMAL, evep.Processor, false);
-                yield return new WaitForSeconds(_standardTimePerTurn / PlaySpeed * 0.5f);
                 foreach (var one in evep.Result)
                 {
                     var pls = FindMapObject<PollutionControl>(one.Item1.Position);
@@ -127,10 +127,10 @@ public class GameControl : MonoBehaviour
             else if (eventBase is PutDetectorEvent eved)
             {
                 var obj = Instantiate(_prefabs["Detector"]);
+                obj.transform.position = new Vector3(eved.Position.x, obj.transform.position.y, eved.Position.y);
                 _gameMap[eved.Position.x][eved.Position.y].Add(obj);
                 obj.GetComponent<DetectorControl>()
                     .SetModelStatus(DetectorControl.StatusEnum.NORMAL, eved.Detector, false);
-                yield return new WaitForSeconds(_standardTimePerTurn / PlaySpeed * 0.5f);
                 foreach (var one in eved.Result)
                 {
                     var pls = FindMapObject<PollutionControl>(one.Position);
@@ -200,7 +200,6 @@ public class GameControl : MonoBehaviour
                 dirtControl.Place = startData.Map[x][y];
                 dirtObj.transform.position = new Vector3(x, dirtObj.transform.position.y, y);
                 _gameMap[x][y].Add(dirtObj);
-                // continue;
                 foreach (MapElementBase element in startData.Map[x][y].Elements)
                 {
                     GameObject obj = null;
