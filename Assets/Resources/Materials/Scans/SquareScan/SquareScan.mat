@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: SquareScan
-  m_Shader: {fileID: 4800000, guid: 0a732171731ca564ea3903c15d131fa2, type: 3}
+  m_Shader: {fileID: 4800000, guid: dd6f6dedfe3041148aedbef2a23cbce5, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -23,4 +23,4 @@ Material:
     - _Blocked: 0
     - _Phase: 0
     m_Colors:
-    - _Color: {r: 0.7877358, g: 1, b: 0.8333463, a: 0.28627452}
+    - _Color: {r: 1, g: 0, b: 0.041718483, a: 1}

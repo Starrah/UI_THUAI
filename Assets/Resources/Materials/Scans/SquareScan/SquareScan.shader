@@ -88,7 +88,8 @@
                 float theta=(sign(y)*acos(x/sqrt(x*x+y*y))+PI)/(2*PI)*360;
 
                 float alpha=(1-((phase-theta)/360) )%1;
-                alpha=pow(alpha,4);
+                alpha= alpha>.8? 1-sqrt(1-pow((alpha-.8)*5,2)):0;
+
                 fixed4 textColor = _Color;
                 //反射颜色
                 fixed3 albedo = textColor.rgb;//* _Color.rgb;

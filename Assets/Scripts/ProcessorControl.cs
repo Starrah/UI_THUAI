@@ -23,15 +23,14 @@ public class ProcessorControl : AGameObjectControl<Processor, ProcessorControl.S
         Animation.PlayQueued("idle", QueueMode.CompleteOthers);
         scan = Instantiate(Rika.Utils.GetScan(element.RangeType), transform);
         // var transform1 = scan.transform;
-        // var position = transform1.position;
+        var position = transform.position;
         // position = new Vector3(position.x, .01f, position.z);
         // transform1.position = position;
-        scan.transform.localPosition = new Vector3(0, -1, 0);
+        scan.transform.position = new Vector3(position.x, .01f, position.z);
         scan.cloneMaterial();
     }
 
     public override void SyncMapElementStatus(Processor element){
         if (ModelStatus != StatusEnum.NORMAL) SetModelStatus(StatusEnum.NORMAL, element, true);
     }
-
 }
