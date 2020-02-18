@@ -98,7 +98,7 @@ namespace GameData
                 }
             } // 加入污染源数据
 
-            
+            long cloneTotalTime = 0;
             for(int i = 0; i < _startData.ActualRoundNum; i++)
             {
                 //处理每回合事件的方式，可以写成一个复杂的if判断和循环：
@@ -107,6 +107,7 @@ namespace GameData
                 //step 2:生成TurnData对象：注意Moneys、Scores数组要重新new，不能复用
                 var turnData = new TurnData() { };
                 turnData.Index = i;
+                long clone1 = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
                 if (i != 0)
                 {
                     turnData.Map = Utils.Clone(_turnData[i - 1].Map);
@@ -119,7 +120,9 @@ namespace GameData
                     turnData.Moneys = new int[] { _startData.Moneys[0], _startData.Moneys[1] };
                     turnData.Scores = new int[] { _startData.Scores[0], _startData.Scores[1] };
                 }
-
+                long clone2 = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
+                cloneTotalTime += (clone2 - clone1);
+                
                 // 对当前回合中的事件按编号排序
                 var curList = updateInfo.events[i].AsQueryable().ToList();
                 curList.Sort((o1, o2) => { return Convert.ToInt32(o1[0]) - Convert.ToInt32(o2[0]); });
@@ -322,7 +325,7 @@ namespace GameData
             }
             
             long endTime = (long)(DateTime.Now - new System.DateTime(1970, 1, 1)).TotalMilliseconds;
-            Debug.Log("GameDataSource: Reading File Cost " + (endTime-startTime) + "ms (in which JSON parsing "+ (midTime-startTime) +"ms)");
+            Debug.Log("GameDataSource: Reading File Cost " + (endTime-startTime) + "ms (in which JSON parsing "+ (midTime-startTime) +"ms, cloning map " + cloneTotalTime +"ms)");
         }
 
         public DeviceRangeTypes IntToDeviceType(int x)
