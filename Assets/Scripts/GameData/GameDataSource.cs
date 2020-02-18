@@ -71,19 +71,11 @@ namespace GameData
                     int polluVal = updateInfo.settings.pollutionMap[x, y];
                     if (polluVal != 0) // 当前污染点的值, 非0表示有污染源
                     {
-                        string componType = Convert.ToString(polluVal, 2); // 转换为二进制
-                        int strlen = componType.Length; 
-                        int typeTotal = updateInfo.settings.pollutionComponentNum;
-
-                        bool[] components = new bool[typeTotal];
-                        for(int i = 0; i < typeTotal - strlen; i++)
-                        {
-                            components[i] = false;
+                        bool[] components = new bool[updateInfo.settings.pollutionComponentNum];
+                        for (int i = 0; i < components.Length; i++, polluVal >>= 1){
+                            components[i] = (polluVal & 1) == 1;
                         }
-                        for(int i = typeTotal - strlen; i < typeTotal; i++)
-                        {
-                            components[i] = componType[i - typeTotal + strlen] == 1;
-                        } // 处理成分
+                        // 处理成分
 
                         bool[] visible = new bool[2];
                         visible[0] = Convert.ToBoolean(updateInfo.settings.pollutionMap0[x, y]);

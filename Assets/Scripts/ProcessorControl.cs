@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using GameData.MapElement;
 using UnityEngine;
 
@@ -23,15 +24,22 @@ public class ProcessorControl : AGameObjectControl<Processor, ProcessorControl.S
         Animation.PlayQueued("idle", QueueMode.CompleteOthers);
         scan = Instantiate(Rika.Utils.GetScan(element.RangeType), transform);
         // var transform1 = scan.transform;
-        // var position = transform1.position;
+        var position = transform.position;
         // position = new Vector3(position.x, .01f, position.z);
         // transform1.position = position;
-        scan.transform.localPosition = new Vector3(0, -1, 0);
+        scan.transform.position = new Vector3(position.x, .01f, position.z);
         scan.cloneMaterial();
+        var color = element.Owner == 0 ? Color.red : Color.blue;
+        color -= new Color(0, 0, 0, .3f);
+        scan.ScanColor = color;
+        foreach (var material in transform.GetComponentsInChildren<MeshRenderer>().AsQueryable()
+            .Select(r => r.material)
+            .Where(m => m.name.Contains("mat")))
+            material.color = color;
+        GetComponent<MapPanel>().setStatus(element);
     }
 
     public override void SyncMapElementStatus(Processor element){
         if (ModelStatus != StatusEnum.NORMAL) SetModelStatus(StatusEnum.NORMAL, element, true);
     }
-
 }

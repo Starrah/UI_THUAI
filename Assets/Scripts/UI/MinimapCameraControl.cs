@@ -31,7 +31,7 @@ public class MinimapCameraControl : MonoBehaviour {
     }
 
     public void initialize(){
-        transform.position = new Vector3(StageRect.center.x - .5f, 2, StageRect.center.y - .5f);
+        transform.position = new Vector3(StageRect.center.x - .5f, 4, StageRect.center.y - .5f);
         _camera.orthographicSize = Mathf.Max(StageRect.width, StageRect.height) / 2;
     }
 
@@ -56,17 +56,16 @@ public class MinimapCameraControl : MonoBehaviour {
         //targets是相机视图四个角的坐标，地图区域映射到0~1之间
         var gamma = Mathf.Atan(Mathf.Sin(alpha));
         var d = Quaternion.AngleAxis(gamma * Mathf.Rad2Deg, Vector3.forward) * Vector3.down;
-        List<Vector2> list = new List<Vector2>();
-        foreach (var i in new[]{0, 1, 2, 3}){
-            var direction = Quaternion.AngleAxis(i * 90, transform1.forward) * d;
-            Ray ray = new Ray(transform1.position, direction);
-            float distance = height / Mathf.Cos(Mathf.Deg2Rad * Vector3.Angle(Vector3.down, direction));
-            var target3 = ray.GetPoint(distance);
-            var unknown = new Vector2(target3.x, target3.z);
-            list.Add(unknown / Mathf.Max(StageRect.width, StageRect.height));
-        }
         var targets =
-            list.ToArray();
+            (from i in new[]{0, 1, 2, 3}
+                select Quaternion.AngleAxis(i * 90, transform1.forward) * d
+                into direction
+                let ray = new Ray(transform1.position, direction)
+                let distance = height / Mathf.Cos(Mathf.Deg2Rad * Vector3.Angle(Vector3.down, direction))
+                select ray.GetPoint(distance)
+                into target3
+                select (new Vector2(target3.x + .5f, target3.z + .5f)) / Mathf.Max(StageRect.width, StageRect.height)
+            ).ToArray();
         var targetTexture = _camera.targetTexture;
 
         var texture2D = new Texture2D(targetTexture.width, targetTexture.height, targetTexture.graphicsFormat,
