@@ -257,7 +257,7 @@ public class GameControl : MonoBehaviour
     // Start is called before the first frame update
     
     private Dictionary<string, GameObject> _prefabs = new Dictionary<string, GameObject>();
-    private bool _isPlaying = false;
+    private bool _isPlaying = true;
     private float _playSpeed = 1.0f;
 
     void Awake()
@@ -327,7 +327,11 @@ public class GameControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space)) IsPlaying = !IsPlaying;
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("Space");
+            IsPlaying = !IsPlaying;
+        }
         if (Input.GetKeyDown(KeyCode.I))
         {
             Debug.Log("I");
@@ -349,11 +353,15 @@ public class GameControl : MonoBehaviour
             Debug.Log(KeyCode.L);
             ChangeTurn(CurrentTurn - 5 >= 0? CurrentTurn - 5 : 0);
         }
-        _time += Time.deltaTime;
-        var turns = (int)Math.Floor(_time / (_standardTimePerTurn / PlaySpeed));
-        for (var i = 0; i < turns; i++)
-            StartCoroutine(NextTurn());
-        _time -= turns * (_standardTimePerTurn / PlaySpeed);
+
+        if (IsPlaying)
+        {
+            _time += Time.deltaTime;
+            var turns = (int) Math.Floor(_time / (_standardTimePerTurn / PlaySpeed));
+            for (var i = 0; i < turns; i++)
+                StartCoroutine(NextTurn());
+            _time -= turns * (_standardTimePerTurn / PlaySpeed);
+        }
     } 
     
     /**
