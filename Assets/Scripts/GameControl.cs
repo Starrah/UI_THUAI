@@ -21,6 +21,8 @@ public class GameControl : MonoBehaviour
      */
     public GameDataSource DataSource;
 
+    public StartData StartData;
+
     /**
      * 当前的播放状态，true为播放中、false为已暂停。
      * 播放器控制部分可直接改变此属性的值。
@@ -35,6 +37,8 @@ public class GameControl : MonoBehaviour
         }
     }
 
+    private float[] _playSpeedValidRange = new float[] {0.2f, 5.0f};
+    
     /**
      * 游戏的播放速度。播放器控制部分可直接改变此属性的值。
      */
@@ -44,7 +48,7 @@ public class GameControl : MonoBehaviour
         set
         {
             _time = 0.0f;
-            _playSpeed = value;
+            _playSpeed = Mathf.Clamp(value, _playSpeedValidRange[0], _playSpeedValidRange[1]);
         }
     }
 
@@ -243,7 +247,7 @@ public class GameControl : MonoBehaviour
      */
     public void ChangeTurn(int turn)
     {
-        CurrentTurn = turn;
+        CurrentTurn = Mathf.Clamp(turn, 0, StartData.ActualRoundNum - 1);
         _time = 0;
         var turnData = DataSource.GetTurnData(CurrentTurn);
         for (int x = 0; x < turnData.Map.Length; x++)
@@ -265,6 +269,8 @@ public class GameControl : MonoBehaviour
         
         DataSource = new GameDataSource();
         DataSource.ReadFile("播放文件示例.json");
+
+        StartData = DataSource.GetStartData();
         
         //TODO MyAi问题
         MyAi = 0;   
