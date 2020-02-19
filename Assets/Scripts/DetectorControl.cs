@@ -21,6 +21,7 @@ public class DetectorControl : AGameObjectControl<Detector, DetectorControl.Stat
     }
 
     public override void SetModelStatus(StatusEnum value, Detector element, bool noAnimation = true){
+        ModelStatus = value;
         var Animation = GetComponent<Animation>();
         if (!noAnimation)
             Animation.Play("in");

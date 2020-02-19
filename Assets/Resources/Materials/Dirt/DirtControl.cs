@@ -22,7 +22,7 @@ public class DirtControl : MonoBehaviour {
     }
 
     private void updateBidTurn(){
-        if (_place.Type != MapPlaceTypes.EMPTY)
+        if (_place.Type != MapPlaceTypes.EMPTY || _place.Bid == null)
             GameControl.Instance.AfterNextTurnEvent -= updateBidTurn;
         else
             GetComponentInChildren<TextMeshPro>().text =

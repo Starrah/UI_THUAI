@@ -254,8 +254,7 @@ public class GameControl : MonoBehaviour
             }
         }
     }
-    // Start is called before the first frame update
-    
+
     private Dictionary<string, GameObject> _prefabs = new Dictionary<string, GameObject>();
     private bool _isPlaying = true;
     private float _playSpeed = 1.0f;
@@ -278,8 +277,26 @@ public class GameControl : MonoBehaviour
         _prefabs["Building"] = Resources.Load<GameObject>("Prefabs/Building");
         _prefabs["Processor"] = Resources.Load<GameObject>("Prefabs/Processor");
         _prefabs["Detector"] = Resources.Load<GameObject>("Prefabs/Detector");
+        _prefabs["Wall"] = Resources.Load<GameObject>("Prefabs/Wall");
 
         var startData = DataSource.GetStartData();
+        var wallsObject = new GameObject("Walls");
+        wallsObject.transform.position = Vector3.zero;
+        for (int x = -1; x <= startData.MapWidth; x++)
+        {
+            var ins = Instantiate(_prefabs["Wall"], wallsObject.transform);
+            ins.transform.position = new Vector3(x, ins.transform.position.y, -1);
+            var ins2 = Instantiate(_prefabs["Wall"], wallsObject.transform);
+            ins2.transform.position = new Vector3(x, ins2.transform.position.y, startData.MapHeight);
+        }
+        for (int y = 0; y < startData.MapHeight; y++)
+        {
+            var ins = Instantiate(_prefabs["Wall"], wallsObject.transform);
+            ins.transform.position = new Vector3(-1, ins.transform.position.y, y);
+            var ins2 = Instantiate(_prefabs["Wall"], wallsObject.transform);
+            ins2.transform.position = new Vector3(startData.MapWidth, ins2.transform.position.y, y);
+        }
+
         _gameMap = new List<GameObject>[startData.MapWidth][];
         for (int x = 0; x < startData.MapWidth; x++)
         {
