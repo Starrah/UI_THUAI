@@ -122,8 +122,9 @@ public class GameControl : MonoBehaviour
                 var obj = Instantiate(_prefabs["Processor"]);
                 obj.transform.position = new Vector3(evep.Position.x, obj.transform.position.y, evep.Position.y);
                 _gameMap[evep.Position.x][evep.Position.y].Add(obj);
-                obj.GetComponent<ProcessorControl>()
-                    .SetModelStatus(ProcessorControl.StatusEnum.NORMAL, evep.Processor, false);
+                var control = obj.GetComponent<ProcessorControl>();
+                control.SetModelStatus(ProcessorControl.StatusEnum.NORMAL, evep.Processor, false);
+                control.Blocked = Utils.CalculateBlocked(StartData.Map, evep.Processor);
                 foreach (var one in evep.Result)
                 {
                     var pls = FindMapObject<PollutionControl>(one.Item1.Position);
@@ -135,8 +136,9 @@ public class GameControl : MonoBehaviour
                 var obj = Instantiate(_prefabs["Detector"]);
                 obj.transform.position = new Vector3(eved.Position.x, obj.transform.position.y, eved.Position.y);
                 _gameMap[eved.Position.x][eved.Position.y].Add(obj);
-                obj.GetComponent<DetectorControl>()
-                    .SetModelStatus(DetectorControl.StatusEnum.NORMAL, eved.Detector, false);
+                var control = obj.GetComponent<DetectorControl>();
+                control.SetModelStatus(DetectorControl.StatusEnum.NORMAL, eved.Detector, false);
+                control.Blocked = Utils.CalculateBlocked(StartData.Map, eved.Detector);
                 foreach (var one in eved.Result)
                 {
                     var pls = FindMapObject<PollutionControl>(one.Position);
@@ -211,6 +213,7 @@ public class GameControl : MonoBehaviour
                 {
                     obj = Instantiate(_prefabs["Detector"]);
                     control = obj.GetComponent<DetectorControl>();
+                    control.Blocked = Utils.CalculateBlocked(StartData.Map, ele3);
                 }
                 control.SyncMapElementStatus(ele3);
             }
@@ -226,6 +229,7 @@ public class GameControl : MonoBehaviour
                 {
                     obj = Instantiate(_prefabs["Processor"]);
                     control = obj.GetComponent<ProcessorControl>();
+                    control.Blocked = Utils.CalculateBlocked(StartData.Map, ele4);
                 }
                 control.SyncMapElementStatus(ele4);
             }
@@ -284,38 +288,37 @@ public class GameControl : MonoBehaviour
         _prefabs["Processor"] = Resources.Load<GameObject>("Prefabs/Processor");
         _prefabs["Detector"] = Resources.Load<GameObject>("Prefabs/Detector");
         _prefabs["Wall"] = Resources.Load<GameObject>("Prefabs/Wall");
-
-        var startData = DataSource.GetStartData();
+        
         var wallsObject = new GameObject("Walls");
         wallsObject.transform.position = Vector3.zero;
-        for (int x = -1; x <= startData.MapWidth; x++)
+        for (int x = -1; x <= StartData.MapWidth; x++)
         {
             var ins = Instantiate(_prefabs["Wall"], wallsObject.transform);
             ins.transform.position = new Vector3(x, ins.transform.position.y, -1);
             var ins2 = Instantiate(_prefabs["Wall"], wallsObject.transform);
-            ins2.transform.position = new Vector3(x, ins2.transform.position.y, startData.MapHeight);
+            ins2.transform.position = new Vector3(x, ins2.transform.position.y, StartData.MapHeight);
         }
-        for (int y = 0; y < startData.MapHeight; y++)
+        for (int y = 0; y < StartData.MapHeight; y++)
         {
             var ins = Instantiate(_prefabs["Wall"], wallsObject.transform);
             ins.transform.position = new Vector3(-1, ins.transform.position.y, y);
             var ins2 = Instantiate(_prefabs["Wall"], wallsObject.transform);
-            ins2.transform.position = new Vector3(startData.MapWidth, ins2.transform.position.y, y);
+            ins2.transform.position = new Vector3(StartData.MapWidth, ins2.transform.position.y, y);
         }
 
-        _gameMap = new List<GameObject>[startData.MapWidth][];
-        for (int x = 0; x < startData.MapWidth; x++)
+        _gameMap = new List<GameObject>[StartData.MapWidth][];
+        for (int x = 0; x < StartData.MapWidth; x++)
         {
-            _gameMap[x] = new List<GameObject>[startData.MapHeight];
-            for (int y = 0; y < startData.MapHeight; y++)
+            _gameMap[x] = new List<GameObject>[StartData.MapHeight];
+            for (int y = 0; y < StartData.MapHeight; y++)
             {
                 _gameMap[x][y] = new List<GameObject>();
                 var dirtObj = Instantiate(_prefabs["Dirt"]);
                 var dirtControl = dirtObj.GetComponent<DirtControl>();
-                dirtControl.Place = startData.Map[x][y];
+                dirtControl.Place = StartData.Map[x][y];
                 dirtObj.transform.position = new Vector3(x, dirtObj.transform.position.y, y);
                 _gameMap[x][y].Add(dirtObj);
-                foreach (MapElementBase element in startData.Map[x][y].Elements)
+                foreach (MapElementBase element in StartData.Map[x][y].Elements)
                 {
                     GameObject obj = null;
                     if (element is PollutionSource ele1)
@@ -333,11 +336,13 @@ public class GameControl : MonoBehaviour
                         obj = Instantiate(_prefabs["Detector"]);
                         var control = obj.GetComponent<DetectorControl>();
                         control.SyncMapElementStatus(ele3);
+                        control.Blocked = Utils.CalculateBlocked(StartData.Map, ele3);
                     }else if (element is Processor ele4)
                     {
                         obj = Instantiate(_prefabs["Processor"]);
                         var control = obj.GetComponent<ProcessorControl>();
                         control.SyncMapElementStatus(ele4);
+                        control.Blocked = Utils.CalculateBlocked(StartData.Map, ele4);
                     }
                     else throw new Exception("非法element");
                     _gameMap[x][y].Add(obj);
