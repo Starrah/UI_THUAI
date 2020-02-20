@@ -29,7 +29,8 @@ public class Scan : MonoBehaviour {
         set {
             value &= (1 << 8) - 1;
             blocked = value;
-            material.SetInt(_Blocked, value);
+            GetComponent<MeshRenderer>().material.SetInt(_Blocked, value);
+            
         }
     }
 
