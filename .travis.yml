@@ -1,0 +1,37 @@
+# do not install anything extra onto the image
+language: generic
+
+# use a Mac OSX image
+os: osx
+
+# only run builds on pushes to the master branch
+branches:
+  only:
+  - master
+
+# run the script to download and install Unity editor
+install:
+- sudo -E sh ./DeployScripts/install.sh
+
+# run the script for unit tests and builds
+script:
+- sudo -E sh ./DeployScripts/build.sh
+
+# run the script to upload the builds as tarballs
+after_success:
+- sudo -E sh ./DeployScripts/post_build.sh
+
+# environment variables used in bash scripts
+env:
+  global:
+  - UNITYCI_PROJECT_NAME="UI_THUAI"
+
+deploy:
+  provider: github
+  api_key:
+    secure: $github_token
+  file_glob: true
+  file: ${UNITYCI_PROJECT_NAME}_win.tar.gz
+  skip_cleanup: true
+  on:
+    tags: true
