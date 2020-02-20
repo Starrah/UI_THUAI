@@ -85,7 +85,6 @@ public static class Utils
                 }
             }    
         }
-        Debug.Log(res);
 
         return res;
     }
@@ -103,8 +102,7 @@ public static class Utils
                 }
             }    
         }
-
-        Debug.Log(res);
+        
         return res;
     }
 }

@@ -261,6 +261,7 @@ public class GameControl : MonoBehaviour
                 ChangeAPlace(turnData.Map[x][y]);
             }
         }
+        AfterNextTurnEvent?.Invoke();
     }
 
     private Dictionary<string, GameObject> _prefabs = new Dictionary<string, GameObject>();
