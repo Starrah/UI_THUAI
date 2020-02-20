@@ -18,6 +18,7 @@ public class ProcessorControl : AGameObjectControl<Processor, ProcessorControl.S
     }
 
     public override void SetModelStatus(StatusEnum value, Processor element, bool noAnimation = true){
+        ModelStatus = value;
         var Animation = GetComponentInChildren<Animation>();
         if (!noAnimation)
             Animation.Play("in");
