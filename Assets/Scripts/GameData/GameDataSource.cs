@@ -350,69 +350,55 @@ namespace GameData
 
         private List<TurnData> _turnData = new List<TurnData>();
     }
-
-    [DataContract]
+    
     public class JSONSettings
     {
-        [DataMember(Order = 0)]
         public int mapWidth;
-
-        [DataMember(Order = 1)]
+        
         public int mapHeight;
-
-        [DataMember(Order = 2)]
+        
         public int landPrice;
-
-        [DataMember(Order = 3)]
+        
         public int[,] buildings;
-
-        [DataMember(Order = 4)]
+        
         public int pollutionComponentNum;
-
-        [DataMember(Order = 5)]
+        
         public int maxRoundNum;
 
-        [DataMember(Order = 6)]
         public int maxRangeNum;
-
-        [DataMember(Order = 7)]
+        
         public int[] processorRangeCost = new int[3];
 
-        [DataMember(Order = 8)]
         public int[] processorTypeCost;
 
-        [DataMember(Order = 9)]
         public int[] detectorRangeCost = new int[3];
 
-        [DataMember(Order = 10)]
         public int tipsterCost;
 
-        [DataMember(Order = 11)]
         public int[] pollutionProfit;
 
-        [DataMember(Order = 12)]
         public int[,] pollutionMap;
 
-        [DataMember(Order = 13)]
         public int[,] pollutionMap0;
 
-        [DataMember(Order = 14)]
         public int[,] pollutionMap1;
 
-        [DataMember(Order = 15)]
         public int[] scores = new int[2];
 
-        [DataMember(Order = 16)]
         public int[] moneys = new int[2];
     }
     
-    [DataContract]
     public class JSONData
     {
-        [DataMember(Order = 0)]
         public JSONSettings settings;
 
-        [DataMember(Order = 1)]
         public object[][][] events;
+    }
+    public class JSONData2
+    {
+        //public JSONSettings settings;
+        public int[] events;
+        
+        public JSONData2(){}
     }
 }
