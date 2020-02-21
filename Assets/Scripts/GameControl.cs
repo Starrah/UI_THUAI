@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using GameData;
 using GameData.GameEvents;
 using GameData.MapElement;
 using UnityEngine;
+using UnityEngine.UI;
 
 /**
  * 控制游戏全局状态的脚本。
@@ -261,6 +263,7 @@ public class GameControl : MonoBehaviour
                 ChangeAPlace(turnData.Map[x][y]);
             }
         }
+        AfterNextTurnEvent?.Invoke();
     }
 
     private Dictionary<string, GameObject> _prefabs = new Dictionary<string, GameObject>();
@@ -269,15 +272,22 @@ public class GameControl : MonoBehaviour
 
     void Awake()
     {
-        Instance = GameObject.Find("GameControl").GetComponent<GameControl>();
-        
-        DataSource = new GameDataSource();
-        DataSource.ReadFile("播放文件示例.json");
+        try
+        {
+            Instance = GameObject.Find("GameControl").GetComponent<GameControl>();
 
-        StartData = DataSource.GetStartData();
-        
-        //TODO MyAi问题
-        MyAi = 0;   
+            DataSource = new GameDataSource();
+            DataSource.ReadFile("./播放文件示例.json");
+
+            StartData = DataSource.GetStartData();
+
+            //TODO MyAi问题
+            MyAi = 0;
+        }
+        catch (Exception e)
+        {
+            GameObject.Find("Text").GetComponent<Text>().text = e.GetType().Name + "\r\n" + e.Message + "\r\n" + e.Source + "\r\n" + e.StackTrace;
+        }
     }
 
     void Start()

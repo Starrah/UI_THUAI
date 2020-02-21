@@ -22,11 +22,11 @@ public class DirtControl : MonoBehaviour {
     }
 
     private void updateBidTurn(){
-        if (_place.Type != MapPlaceTypes.EMPTY || _place.Bid == null)
+        if (_place.Type != MapPlaceTypes.EMPTY)
             GameControl.Instance.AfterNextTurnEvent -= updateBidTurn;
         else
             GetComponentInChildren<TextMeshPro>().text =
-                (GameControl.Instance.CurrentTurn - _place.Bid.turn).ToString();
+                _place.Bid != null?(_place.Bid.turn + 5 - GameControl.Instance.CurrentTurn).ToString():"";
     }
 
     public MapPlace Place {

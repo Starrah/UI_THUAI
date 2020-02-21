@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using GameData.MapElement;
-using UnityEditor.PackageManager.Requests;
 
 namespace GameData
 {
