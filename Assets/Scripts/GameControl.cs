@@ -253,6 +253,9 @@ public class GameControl : MonoBehaviour
      */
     public void ChangeTurn(int turn)
     {
+        // 
+        turn = (turn < 0) ? 0 : turn;
+        //
         CurrentTurn = Mathf.Clamp(turn, 0, StartData.ActualRoundNum - 1);
         _time = 0;
         var turnData = DataSource.GetTurnData(CurrentTurn);
@@ -365,16 +368,19 @@ public class GameControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Debug.Log("Space");
-            IsPlaying = !IsPlaying;
-        }
+        
         if (Input.GetKeyDown(KeyCode.I))
         {
             Debug.Log("I");
             var qwq = FindMapObject<PollutionControl>(new Point(0, 3));
             qwq.SetModelStatus(PollutionControl.StatusEnum.PROCESSED, null, false);
+        }
+        /* implemented in PlayerManager.cs
+        
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("Space");
+            IsPlaying = !IsPlaying;
         }
         if (Input.GetKeyDown(KeyCode.O))
         {
@@ -391,7 +397,8 @@ public class GameControl : MonoBehaviour
             Debug.Log(KeyCode.L);
             ChangeTurn(CurrentTurn - 5 >= 0? CurrentTurn - 5 : 0);
         }
-
+        
+         */
         if (IsPlaying)
         {
             _time += Time.deltaTime;
