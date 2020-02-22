@@ -215,9 +215,9 @@ public class GameControl : MonoBehaviour
                 {
                     obj = Instantiate(_prefabs["Detector"]);
                     control = obj.GetComponent<DetectorControl>();
-                    control.Blocked = Utils.CalculateBlocked(StartData.Map, ele3);
                 }
                 control.SyncMapElementStatus(ele3);
+                control.Blocked = Utils.CalculateBlocked(StartData.Map, ele3);
             }
             else if (element is Processor ele4)
             {
@@ -231,13 +231,14 @@ public class GameControl : MonoBehaviour
                 {
                     obj = Instantiate(_prefabs["Processor"]);
                     control = obj.GetComponent<ProcessorControl>();
-                    control.Blocked = Utils.CalculateBlocked(StartData.Map, ele4);
                 }
                 control.SyncMapElementStatus(ele4);
+                control.Blocked = Utils.CalculateBlocked(StartData.Map, ele4);
             }
             else throw new Exception("非法element");
             
             newObjs.Add(obj);
+            obj.transform.position = new Vector3(mapPlace.Position.x, obj.transform.position.y, mapPlace.Position.y);
         }
         
         foreach (GameObject oldObj in oldObjs)

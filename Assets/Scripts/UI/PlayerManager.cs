@@ -27,7 +27,7 @@ public class PlayerManager : MonoBehaviour
     public Image[] flag;
 
     // for pop-up coin change message
-    private int preTurn;
+    private int preTurn = -1;
     private int preRedCoin, preBlueCoin;
     public Text redCoinChange, blueCoinChange;
 
