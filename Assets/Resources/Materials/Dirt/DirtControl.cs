@@ -14,7 +14,7 @@ public class DirtControl : MonoBehaviour {
     private Color _color {
         get {
             // var c = (int) (_place.Position.x + _place.Position.y) % 2 == 0 ? Color.white : new Color(.8f, .8f, .8f);
-            var c=Color.white;
+            var c = Color.white;
             // if (_place.Type == MapPlaceTypes.BOUGHT)
             //     c *= (_place.Owner == 0 ? new Color(1, .6f, .6f) : new Color(.6f, .6f, 1));
             return c;
@@ -35,10 +35,18 @@ public class DirtControl : MonoBehaviour {
             _place = value;
             transform.position = new Vector3(value.Position.x, 0, value.Position.y);
             //如果出价状态非空（即至少进入拍卖环节
-            if (!(value.Bid is null)){
-                var tmp=GetComponentInChildren<TextMeshPro>();
+            var tmp = GetComponentInChildren<TextMeshPro>();
+            if (value.Bid is null){
+                if (!(tmp is null))
+                    tmp.enabled = false;
+            }
+            else{
                 if (tmp is null)
-                    Instantiate(Resources.Load<TextMeshPro>("Materials/Dirt/Num"), transform);
+                    tmp = Instantiate(Resources.Load<TextMeshPro>("Materials/Dirt/Num"), transform);
+                if (!tmp.enabled){
+                    tmp.enabled = true;
+                }
+
                 var ai = value.Bid.Ai;
                 tmp = GetComponentInChildren<TextMeshPro>();
                 tmp.color = new Color(ai == 0 ? 1 : 0, 0, ai == 1 ? 1 : 0, .5f);
@@ -47,7 +55,9 @@ public class DirtControl : MonoBehaviour {
                         break;
                     case MapPlaceTypes.EMPTY:
                         //如果还没拍成
+                        GameControl.Instance.AfterNextTurnEvent -= updateBidTurn;
                         GameControl.Instance.AfterNextTurnEvent += updateBidTurn;
+                        updateBidTurn();
                         break;
                     case MapPlaceTypes.BOUGHT_FAILED:
                         tmp.text = "×";

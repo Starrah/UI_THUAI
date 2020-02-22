@@ -56,12 +56,12 @@ public class PollutionControl : AGameObjectControl<PollutionSource, PollutionCon
                 delay += Time.fixedDeltaTime;
                 var nowC = Color.Lerp(initC, tarC, delay / fadeDelay);
                 g.SetColor(_Color, nowC);
-                b.SetColor(_Color, new Color(nowC.r, nowC.g, nowC.b, nowC.a / 3));
+                b.SetColor(_Color, new Color(nowC.r, nowC.g, nowC.b, nowC.a / 2));
                 yield return new WaitForEndOfFrame();
             }
         else{
             g.SetColor(_Color, tarC);
-            b.SetColor(_Color, new Color(tarC.r, tarC.g, tarC.b, tarC.a / 3));
+            b.SetColor(_Color, new Color(tarC.r, tarC.g, tarC.b, tarC.a / 2));
         }
     }
     #endregion
