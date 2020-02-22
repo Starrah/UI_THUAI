@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerManager : MonoBehaviour
@@ -37,6 +38,7 @@ public class PlayerManager : MonoBehaviour
     {
         gameControlInstance.IsPlaying = false;
         playPauseBtn.image.sprite = spritePlayPause[spriteNum];
+        changePlaying();//默认游戏是开始的
 
         flag[0].enabled = false;
         flag[1].enabled = false;
@@ -74,7 +76,8 @@ public class PlayerManager : MonoBehaviour
     public void slideSpeed(float value)
     {
         Debug.Log("Speed Slide value changed");
-        gameControlInstance.PlaySpeed = value;
+        //速度与滑块之间的对应改为分段线性插值算法
+        gameControlInstance.PlaySpeed = value >= 0 ? Mathf.Lerp(1, 5, value) : Mathf.Lerp(1, 0.2f, -value);
     }
 
     // change current turn when next(number = 5)/previous(number = -5) button "OnClick"
@@ -94,12 +97,11 @@ public class PlayerManager : MonoBehaviour
 
     private void Update()
     {
-        speedValue.text = gameControlInstance.PlaySpeed.ToString();
-        speedSlider.value = gameControlInstance.PlaySpeed;
+        speedValue.text = gameControlInstance.PlaySpeed.ToString("0.00");
 
         currentTurn = gameControlInstance.CurrentTurn;
         turnSlider.value = currentTurn;
-        turnNumber.text = gameControlInstance.CurrentTurn.ToString();
+        turnNumber.text = (gameControlInstance.CurrentTurn+1).ToString();//用户习惯回合从1开始
 
         coinValue = gameControlInstance.GetMoneys();
         scoreValue = gameControlInstance.GetScores();

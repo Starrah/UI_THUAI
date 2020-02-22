@@ -40,7 +40,7 @@ public class GameControl : MonoBehaviour
     }
 
     private float[] _playSpeedValidRange = new float[] {0.2f, 5.0f};
-    
+
     /**
      * 游戏的播放速度。播放器控制部分可直接改变此属性的值。
      */
