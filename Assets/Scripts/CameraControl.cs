@@ -45,6 +45,19 @@ public class CameraControl : MonoBehaviour {
         transform.position += transform1.forward * (direction * zoomVelocity);
     }
 
+    private void Rotate(float delta_angle){
+        var angle0 = _camera.fieldOfView / 2;
+        var height = _camera.transform.position.y;
+        var radius = height / Mathf.Cos(angle0 * Mathf.Deg2Rad);
+        var level_distance = radius * Mathf.Sin(angle0 * Mathf.Deg2Rad);
+        var angle = angle0 + delta_angle;
+        var new_level_distance = radius * Mathf.Sin(angle * Mathf.Deg2Rad);
+        var new_height = radius * Mathf.Cos(angle * Mathf.Deg2Rad);
+        _camera.fieldOfView = 2 * angle;
+        _camera.transform.rotation = Quaternion.AngleAxis(90-angle, Vector3.right);
+        _camera.transform.position += new Vector3(0, new_height - height, level_distance - new_level_distance);
+    }
+
     private void Move(Vector2 direction){
         direction = checkEdge(direction);
         transform.position += new Vector3(direction.x, 0, direction.y) * (moveVelocity * Time.deltaTime);
@@ -54,6 +67,7 @@ public class CameraControl : MonoBehaviour {
         //处理相机的移动
         var direction = Vector2.zero;
         var zoom = 0f;
+        var angle = 0f;
         if (Input.GetKey(KeyCode.W))
             direction += Vector2.up;
         if (Input.GetKey(KeyCode.A))
@@ -62,6 +76,10 @@ public class CameraControl : MonoBehaviour {
             direction += Vector2.down;
         if (Input.GetKey(KeyCode.D))
             direction += Vector2.right;
+        if (Input.GetKey(KeyCode.Q))
+            angle += 10;
+        if (Input.GetKey(KeyCode.E))
+            angle -= 10;
         if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl) ||
             Input.GetKey(KeyCode.LeftCommand) || Input.GetKey(KeyCode.RightCommand) || Input.GetKey(KeyCode.Z))
             zoom += 1;
@@ -71,11 +89,12 @@ public class CameraControl : MonoBehaviour {
             direction /= 3;
             zoom /= 3;
         }
-
         if (direction.magnitude > 0)
             Move(direction);
         if (Math.Abs(zoom) > TOLERANCE)
             Zoom(zoom);
+        if (Math.Abs(angle) > TOLERANCE)
+            Rotate(angle*Time.deltaTime);
     }
 
     private void Start(){
