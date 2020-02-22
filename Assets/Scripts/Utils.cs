@@ -60,14 +60,14 @@ public static class Utils
             {
                 DeviceRangeTypes.DIAGON, new List<(Point, List<int>)>()
                 {
-                    (new Point(-1, -1), new List<int>() {2,6}),
-                    (new Point(1, -1), new List<int>() {1,5}),
-                    (new Point(-1, 1), new List<int>() {3,7}),
-                    (new Point(1, 1), new List<int>() {4,8}),
-                    (new Point(-2, -2), new List<int>() {6}),
-                    (new Point(2, -2), new List<int>() {5}),
-                    (new Point(-2, 2), new List<int>() {7}),
-                    (new Point(2, 2), new List<int>() {8}),
+                    (new Point(-1, -1), new List<int>() {1,5}),
+                    (new Point(1, -1), new List<int>() {0,4}),
+                    (new Point(-1, 1), new List<int>() {2,6}),
+                    (new Point(1, 1), new List<int>() {3,7}),
+                    (new Point(-2, -2), new List<int>() {5}),
+                    (new Point(2, -2), new List<int>() {4}),
+                    (new Point(-2, 2), new List<int>() {6}),
+                    (new Point(2, 2), new List<int>() {7}),
                 }
             },
         };
