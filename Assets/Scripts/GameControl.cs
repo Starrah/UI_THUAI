@@ -227,7 +227,7 @@ public class GameControl : MonoBehaviour
                     obj = control.gameObject;
                     oldObjs.Remove(obj);
                 }
-                else
+                else 
                 {
                     obj = Instantiate(_prefabs["Processor"]);
                     control = obj.GetComponent<ProcessorControl>();
