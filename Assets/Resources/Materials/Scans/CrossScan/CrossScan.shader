@@ -70,7 +70,11 @@
             }
             int _Blocked;
             static const float PI=3.1415926535898;
-            static int blocked[5][5]={-1,-1,8,-1,-1,-1,-1,4,-1,-1,2,3,0,1,5,-1,-1,2,-1,-1,-1,-1,6,-1,-1};
+            static int blocked[5][5]={-1,-1,8,-1,-1,
+                                      -1,-1,4,-1,-1,
+                                       7, 3,0, 1, 5,
+                                      -1,-1,2,-1,-1,
+                                      -1,-1,6,-1,-1};
             fixed4 frag(v2f i) : SV_Target
             {
                 if(1<< (blocked[int(i.uv.x*5)][(int)(i.uv.y*5)]-1) & _Blocked)

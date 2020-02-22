@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Scan : MonoBehaviour {
     [SerializeField] Color scanColor = Color.white;
-    [SerializeField] Material material;
 
     /// <summary>
     /// 设置地块扫描颜色，包含透明度项
@@ -13,7 +12,7 @@ public class Scan : MonoBehaviour {
         get => scanColor;
         set {
             scanColor = value;
-            material.SetColor(_Color, value);
+            GetComponent<MeshRenderer>().material.SetColor(_Color, value);
         }
     }
 
@@ -30,7 +29,6 @@ public class Scan : MonoBehaviour {
             value &= (1 << 8) - 1;
             blocked = value;
             GetComponent<MeshRenderer>().material.SetInt(_Blocked, value);
-            
         }
     }
 
@@ -38,10 +36,7 @@ public class Scan : MonoBehaviour {
     private static readonly int _Blocked = Shader.PropertyToID("_Blocked");
     private static readonly int _Color = Shader.PropertyToID("_Color");
 
-    public Material cloneMaterial(){
-        material = new Material(GetComponent<MeshRenderer>().material);
-        GetComponent<MeshRenderer>().material = material;
-        return material;
+    public void cloneMaterial(){
+        GetComponent<MeshRenderer>().material = new Material(GetComponent<MeshRenderer>().material);
     }
-    
 }
