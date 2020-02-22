@@ -40,7 +40,7 @@ public class GameControl : MonoBehaviour
     }
 
     private float[] _playSpeedValidRange = new float[] {0.2f, 5.0f};
-    
+
     /**
      * 游戏的播放速度。播放器控制部分可直接改变此属性的值。
      */
@@ -215,9 +215,9 @@ public class GameControl : MonoBehaviour
                 {
                     obj = Instantiate(_prefabs["Detector"]);
                     control = obj.GetComponent<DetectorControl>();
-                    control.Blocked = Utils.CalculateBlocked(StartData.Map, ele3);
                 }
                 control.SyncMapElementStatus(ele3);
+                control.Blocked = Utils.CalculateBlocked(StartData.Map, ele3);
             }
             else if (element is Processor ele4)
             {
@@ -231,13 +231,14 @@ public class GameControl : MonoBehaviour
                 {
                     obj = Instantiate(_prefabs["Processor"]);
                     control = obj.GetComponent<ProcessorControl>();
-                    control.Blocked = Utils.CalculateBlocked(StartData.Map, ele4);
                 }
                 control.SyncMapElementStatus(ele4);
+                control.Blocked = Utils.CalculateBlocked(StartData.Map, ele4);
             }
             else throw new Exception("非法element");
             
             newObjs.Add(obj);
+            obj.transform.position = new Vector3(mapPlace.Position.x, obj.transform.position.y, mapPlace.Position.y);
         }
         
         foreach (GameObject oldObj in oldObjs)
@@ -253,6 +254,9 @@ public class GameControl : MonoBehaviour
      */
     public void ChangeTurn(int turn)
     {
+        // 
+        turn = (turn < 0) ? 0 : turn;
+        //
         CurrentTurn = Mathf.Clamp(turn, 0, StartData.ActualRoundNum - 1);
         _time = 0;
         var turnData = DataSource.GetTurnData(CurrentTurn);
@@ -365,16 +369,19 @@ public class GameControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Debug.Log("Space");
-            IsPlaying = !IsPlaying;
-        }
+        
         if (Input.GetKeyDown(KeyCode.I))
         {
             Debug.Log("I");
             var qwq = FindMapObject<PollutionControl>(new Point(0, 3));
             qwq.SetModelStatus(PollutionControl.StatusEnum.PROCESSED, null, false);
+        }
+        /* implemented in PlayerManager.cs
+        
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("Space");
+            IsPlaying = !IsPlaying;
         }
         if (Input.GetKeyDown(KeyCode.O))
         {
@@ -391,7 +398,8 @@ public class GameControl : MonoBehaviour
             Debug.Log(KeyCode.L);
             ChangeTurn(CurrentTurn - 5 >= 0? CurrentTurn - 5 : 0);
         }
-
+        
+         */
         if (IsPlaying)
         {
             _time += Time.deltaTime;
