@@ -9,7 +9,7 @@ public class PlayerManager : MonoBehaviour
     // for play/pause button (used to change the sprite currently show)
     public Button playPauseBtn;
     public Sprite[] spritePlayPause;
-    private int spriteNum = 1;
+    private int spriteNum = 0;
 
     // for speed slider and speed value (used to synchronize the number shown and the handle place)
     public Slider speedSlider;
@@ -32,13 +32,11 @@ public class PlayerManager : MonoBehaviour
     private int preRedCoin, preBlueCoin;
     public Text redCoinChange, blueCoinChange;
 
-    // initialize the player: PAUSE playing
-    // change to PLAY playing: set IsPlaying = true; spriteNum in the declaration should be 0
+    // initialize the player: playing
     private void Start()
     {
-        gameControlInstance.IsPlaying = false;
+        gameControlInstance.IsPlaying = true;
         playPauseBtn.image.sprite = spritePlayPause[spriteNum];
-        changePlaying();//默认游戏是开始的
 
         flag[0].enabled = false;
         flag[1].enabled = false;
