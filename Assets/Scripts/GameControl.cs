@@ -376,30 +376,6 @@ public class GameControl : MonoBehaviour
             var qwq = FindMapObject<PollutionControl>(new Point(0, 3));
             qwq.SetModelStatus(PollutionControl.StatusEnum.PROCESSED, null, false);
         }
-        /* implemented in PlayerManager.cs
-        
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Debug.Log("Space");
-            IsPlaying = !IsPlaying;
-        }
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            Debug.Log(KeyCode.O);
-            PlaySpeed *= 1.5f;
-        }
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            Debug.Log(KeyCode.P);
-            PlaySpeed /= 1.5f;
-        }
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            Debug.Log(KeyCode.L);
-            ChangeTurn(CurrentTurn - 5 >= 0? CurrentTurn - 5 : 0);
-        }
-        
-         */
         if (IsPlaying)
         {
             _time += Time.deltaTime;

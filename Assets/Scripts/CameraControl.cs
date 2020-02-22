@@ -65,7 +65,7 @@ public class CameraControl : MonoBehaviour {
         if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl) ||
             Input.GetKey(KeyCode.LeftCommand) || Input.GetKey(KeyCode.RightCommand) || Input.GetKey(KeyCode.Z))
             zoom += 1;
-        if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.X))
+        if (Input.GetKey(KeyCode.X))
             zoom -= 1;
         if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)){
             direction /= 3;
