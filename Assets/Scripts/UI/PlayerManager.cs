@@ -110,11 +110,11 @@ public class PlayerManager : MonoBehaviour
         int AiNumber = gameControlInstance.DataSource.GetTurnData(currentTurn).Ai;
         string text = "";
 
-        updateMessage("\n ------ 回合" + (currentTurn + 1).ToString() + " ------", 2);
+        updateMessage("\n------ 回合" + (currentTurn + 1).ToString() + " ------", 2);
 
         if (turnEventNumber > 0)
         {        
-            text = "\n玩家" + AiNumber.ToString() + ":";
+            text = "\n 玩家" + AiNumber.ToString() + ":";
             updateMessage(text, AiNumber);
         }
 
@@ -126,38 +126,38 @@ public class PlayerManager : MonoBehaviour
             {
                 if (bre.Success)
                 {
-                    text = "地皮拍卖成功！";
+                    text = " 地皮拍卖成功！";
                 }
                 else
                 {
-                    text = "发起的地皮拍卖因竞拍方余额不足而流拍。";
+                    text = " 发起的地皮拍卖因竞拍方余额不足而流拍。";
                 }
             }
 
             if (curTurnEvent[i] is NewBidEvent nbe)
             {
-                text = "发起金额 " + nbe.Bid.money.ToString() + " 的拍卖。";
+                text = " 发起金额 " + nbe.Bid.money.ToString() + " 的拍卖。";
             }
 
             if (curTurnEvent[i] is PutDetectorEvent pde)
             {
-                text = "设置检测设备，共找到 " + pde.Result.Count + " 个疫区。";
+                text = " 设置检测设备，共找到 " + pde.Result.Count + " 个疫区。";
             }
 
             if (curTurnEvent[i] is PutProcessorEvent ppe)
             {
-                text = "设置治理设备，共治理 " + ppe.Result.Count + " 个疫区。";
+                text = " 设置治理设备，共治理 " + ppe.Result.Count + " 个疫区。";
             }
 
             if (curTurnEvent[i] is TipsterEvent te)
             {
                 if (te.Success)
                 {
-                    text = "超级侦察机在( " + te.Result.x + ", " + te.Result.y + ")找到未被检测的疫区";
+                    text = " 超级侦察机在( " + te.Result.x + ", " + te.Result.y + ")找到未被检测的疫区";
                 }
                 else
                 {
-                    text = "侦察机没有找到未被发现的疫区。所有疫区已被发现。";
+                    text = " 侦察机没有找到未被发现的疫区。所有疫区已被发现。";
                 }
             }
             updateMessage(text, AiNumber); 
@@ -184,7 +184,6 @@ public class PlayerManager : MonoBehaviour
             if(colorType == 2)
             {
                 newMessage.textObject.alignment = TextAnchor.MiddleCenter;
-                newMessage.textObject.fontStyle = FontStyle.Bold;
             }
             newMessage.textObject.color = messageColor[colorType];
             messageList.Add(newMessage);
