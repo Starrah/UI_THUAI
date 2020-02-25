@@ -98,7 +98,6 @@ public class PlayerManager : MonoBehaviour
     // change current turn when the speedSlider "OnValueChanged"
     public void slideTurn(float turn)
     {
-        Debug.Log("Turn Slide value changed to :" + (int)turn);
         gameControlInstance.ChangeTurn((int)turn);
     }
 
@@ -209,7 +208,7 @@ public class PlayerManager : MonoBehaviour
         score[0].text = scoreValue[0].ToString();
         score[1].text = scoreValue[1].ToString();
 
-        if(preTurn != currentTurn)
+        if (preTurn != currentTurn && preTurn < GameControl.Instance.StartData.ActualRoundNum)
         {
             redCoinChange.enabled = false;
             blueCoinChange.enabled = false;
