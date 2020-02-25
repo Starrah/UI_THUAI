@@ -421,7 +421,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -9.499872, y: -0.0006713867}
+  m_AnchoredPosition: {x: 9.499962, y: 0.00030517578}
   m_SizeDelta: {x: -19, y: 0}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &83266737
@@ -1762,6 +1762,7 @@ MonoBehaviour:
     TipsterPrice: 0
     Scores: 
     Moneys: 
+  MyAi: -1
 --- !u!4 &802958884
 Transform:
   m_ObjectHideFlags: 0
@@ -4682,7 +4683,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 367841425}
   m_HandleRect: {fileID: 367841424}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -4878,7 +4879,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1228678428}
   m_HandleRect: {fileID: 1228678427}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:

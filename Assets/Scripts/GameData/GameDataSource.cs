@@ -1,4 +1,5 @@
-﻿using System;﻿
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
@@ -13,11 +14,9 @@ namespace GameData
 {
     public class GameDataSource
     {
-        /**
-        * 读取播放协议文件（一个符合播放协议的JSON文件），解析为每个回合的状态信息和动作信息，并缓存起来。
-        * 该函数允许有比较长的耗时。
-        */
-        public virtual void ReadFile(string fileName)
+        public float ProcessedRate { get; private set; } = 0.0f;
+        
+        public virtual IEnumerator ReadFileAsync(string fileName)
         {
             long startTime = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
             
@@ -27,6 +26,7 @@ namespace GameData
             StringReader sr = new StringReader(playFileContent);
             JSONData updateInfo = serializer.Deserialize<JSONData>(new JsonTextReader(sr));
             long midTime = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
+            yield return null;
 
             _startData = new StartData
             {
@@ -89,6 +89,7 @@ namespace GameData
                     }
                 }
             } // 加入污染源数据
+            yield return null;
 
             long cloneTotalTime = 0;
             for(int i = 0; i < _startData.ActualRoundNum; i++)
@@ -314,11 +315,33 @@ namespace GameData
                 }
 
                 _turnData.Add(turnData);
+                ProcessedRate = (float) (i + 1) / _startData.ActualRoundNum;
+                yield return null;
             }
             
             long endTime = (long)(DateTime.Now - new System.DateTime(1970, 1, 1)).TotalMilliseconds;
             Debug.Log("GameDataSource: Reading File Cost " + (endTime-startTime) + "ms (in which JSON parsing "+ (midTime-startTime) +"ms, cloning map " + cloneTotalTime +"ms)");
+        
         }
+
+        /**
+        * 读取播放协议文件（一个符合播放协议的JSON文件），解析为每个回合的状态信息和动作信息，并缓存起来。
+        * 该函数允许有比较长的耗时。
+        */
+        public virtual void ReadFile(string fileName)
+        {
+            var enumerator = ReadFileAsync(fileName);
+            var res = true;
+            while (res)
+            {
+                res = enumerator.MoveNext();
+            }
+        }
+        
+        /**
+        * 读取播放协议文件（一个符合播放协议的JSON文件），解析为每个回合的状态信息和动作信息，并缓存起来。
+        * 该函数允许有比较长的耗时。
+        */
 
         public DeviceRangeTypes IntToDeviceType(int x)
         {

@@ -17,6 +17,8 @@ public class GameControl : MonoBehaviour
 {
     public static GameControl Instance { get; private set; } = null;
 
+    public static (GameDataSource, int) DataPassedFromStartScene = (null, -1);
+
     /**
      * 游戏数据源对象。
      * 请注意其他人使用此对象时不要对里面的数据内容做任何修改。
@@ -57,7 +59,7 @@ public class GameControl : MonoBehaviour
     /**
      * 我的阵营编号
      */
-    public int MyAi { get; private set; } = -1;
+    public int MyAi = -1;
     
     //私有变量部分
     private List<GameObject>[][] _gameMap;
@@ -279,14 +281,18 @@ public class GameControl : MonoBehaviour
         try
         {
             Instance = GameObject.Find("GameControl").GetComponent<GameControl>();
-
-            DataSource = new GameDataSource();
-            DataSource.ReadFile("./播放文件示例.json");
-
+            if (DataPassedFromStartScene.Item1 != null)
+            {
+                DataSource = DataPassedFromStartScene.Item1;
+                MyAi = DataPassedFromStartScene.Item2;
+            }
+            else
+            {
+                DataSource = new GameDataSource();
+                DataSource.ReadFile("./播放文件示例.json");
+                MyAi = 0;
+            }
             StartData = DataSource.GetStartData();
-
-            //TODO MyAi问题
-            MyAi = 0;
         }
         catch (Exception e)
         {
