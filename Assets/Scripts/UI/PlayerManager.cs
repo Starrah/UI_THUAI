@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using GameData.GameEvents;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,7 +11,7 @@ public class PlayerManager : MonoBehaviour
     // for play/pause button (used to change the sprite currently show)
     public Button playPauseBtn;
     public Sprite[] spritePlayPause;
-    private int spriteNum = 1;
+    private int spriteNum = 0;
 
     // for speed slider and speed value (used to synchronize the number shown and the handle place)
     public Slider speedSlider;
@@ -32,13 +34,19 @@ public class PlayerManager : MonoBehaviour
     private int preRedCoin, preBlueCoin;
     public Text redCoinChange, blueCoinChange;
 
-    // initialize the player: PAUSE playing
-    // change to PLAY playing: set IsPlaying = true; spriteNum in the declaration should be 0
+    // for message panel
+    public int maxMessage = 60;
+    public GameObject messagePanel, textObject;
+    public Color[] messageColor;
+
+    [SerializeField]
+    List<Message> messageList = new List<Message>();
+
+    // initialize the player: playing
     private void Start()
     {
-        gameControlInstance.IsPlaying = false;
+        gameControlInstance.IsPlaying = true;
         playPauseBtn.image.sprite = spritePlayPause[spriteNum];
-        changePlaying();//默认游戏是开始的
 
         flag[0].enabled = false;
         flag[1].enabled = false;
@@ -93,7 +101,97 @@ public class PlayerManager : MonoBehaviour
         Debug.Log("Turn Slide value changed to :" + (int)turn);
         gameControlInstance.ChangeTurn((int)turn);
     }
-       
+
+    // generate event message and then send to updateMessage
+    private void generateMessage()
+    {
+        // get the total number of the events happening in the current turn
+        List<GameEventBase> curTurnEvent = gameControlInstance.DataSource.GetTurnData(currentTurn).Events;
+        int turnEventNumber = curTurnEvent.Count;
+        int AiNumber = gameControlInstance.DataSource.GetTurnData(currentTurn).Ai;
+        string text = "";
+
+        updateMessage("\n ------ 回合" + (currentTurn + 1).ToString() + " ------", 2);
+
+        if (turnEventNumber > 0)
+        {        
+            text = "\n玩家" + AiNumber.ToString() + ":";
+            updateMessage(text, AiNumber);
+        }
+
+        // add all event messages to the message list and message panel
+        for (int i = 0; i < turnEventNumber; ++i)
+        {
+            // get event[i] and generate Chinese message according to the event type and event result
+            if (curTurnEvent[i] is BidResultEvent bre)
+            {
+                if (bre.Success)
+                {
+                    text = "拍卖成功！";
+                }
+                else
+                {
+                    text = "发起的拍卖因竞拍方余额不足而流拍。";
+                }
+            }
+
+            if (curTurnEvent[i] is NewBidEvent nbe)
+            {
+                text = "发起金额 " + nbe.Bid.money.ToString() + " 的拍卖。";
+            }
+
+            if (curTurnEvent[i] is PutDetectorEvent pde)
+            {
+                text = "放置检测器，共找到 " + pde.Result.Count + " 个污染源。";
+            }
+
+            if (curTurnEvent[i] is PutProcessorEvent ppe)
+            {
+                text = "放置处理器，共处理 " + ppe.Result.Count + " 个污染源。";
+            }
+
+            if (curTurnEvent[i] is TipsterEvent te)
+            {
+                if (te.Success)
+                {
+                    text = "查找Tipster成功！";
+                }
+                else
+                {
+                    text = "查找Tipster失败。";
+                }
+            }
+            updateMessage(text, AiNumber); 
+        }
+    }
+
+    // update turn event to message panel
+    // colorType: 0: player 0, 1: player 1, 2: system
+    private void updateMessage(string text, int colorType)
+    {
+        if (text.Length > 0)
+        {
+            if (messageList.Count > maxMessage)
+            {
+                Destroy(messageList[0].textObject.gameObject);
+                messageList.Remove(messageList[0]);
+            }
+            
+            Message newMessage = new Message();
+            newMessage.text = text;
+            GameObject newText = Instantiate(textObject, messagePanel.transform);
+            newMessage.textObject = newText.GetComponent<Text>();
+            newMessage.textObject.text = newMessage.text;
+            if(colorType == 2)
+            {
+                newMessage.textObject.alignment = TextAnchor.MiddleCenter;
+                newMessage.textObject.fontStyle = FontStyle.Bold;
+            }
+            newMessage.textObject.color = messageColor[colorType];
+            messageList.Add(newMessage);
+        }   
+        
+    }
 
     private void Update()
     {
@@ -115,6 +213,8 @@ public class PlayerManager : MonoBehaviour
         {
             redCoinChange.enabled = false;
             blueCoinChange.enabled = false;
+            generateMessage();
+
             if (coinValue[0] != preRedCoin)
             {
                 int sub = coinValue[0] - preRedCoin;
@@ -129,8 +229,9 @@ public class PlayerManager : MonoBehaviour
                 blueCoinChange.enabled = true;
                 preBlueCoin = coinValue[1];
             }
+
+            preTurn = currentTurn;
         }
-        preTurn = currentTurn;
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -153,4 +254,11 @@ public class PlayerManager : MonoBehaviour
             multiplySpeed((float)1.25);
         }
     }
+}
+
+[System.Serializable]
+public class Message
+{
+    public string text;
+    public Text textObject;
 }
