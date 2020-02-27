@@ -16,6 +16,7 @@ public class PlayerManager : MonoBehaviour
     // for speed slider and speed value (used to synchronize the number shown and the handle place)
     public Slider speedSlider;
     public Text speedValue;
+    private float curPlaySpeed;
 
     // for turn slider and turn number (used to synchronize the number shown and the handle place)
     public Slider turnSlider;
@@ -193,7 +194,9 @@ public class PlayerManager : MonoBehaviour
 
     private void Update()
     {
-        speedValue.text = gameControlInstance.PlaySpeed.ToString("0.00");
+        curPlaySpeed = gameControlInstance.PlaySpeed;
+        speedValue.text = curPlaySpeed.ToString("0.00");
+        speedSlider.value = (curPlaySpeed < 1) ? (curPlaySpeed - 1) * 5 / 4 : (curPlaySpeed - 1) / 4;
 
         currentTurn = gameControlInstance.CurrentTurn;
         turnSlider.value = currentTurn;
