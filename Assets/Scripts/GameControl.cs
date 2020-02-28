@@ -375,13 +375,6 @@ public class GameControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            Debug.Log("I");
-            var qwq = FindMapObject<PollutionControl>(new Point(0, 3));
-            qwq.SetModelStatus(PollutionControl.StatusEnum.PROCESSED, null, false);
-        }
         if (IsPlaying)
         {
             _time += Time.deltaTime;

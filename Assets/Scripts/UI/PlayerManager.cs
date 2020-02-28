@@ -239,19 +239,24 @@ public class PlayerManager : MonoBehaviour
             Debug.Log("Space");
             changePlaying();
         }
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            Debug.Log("k");
+            gameControlInstance.ChangeTurn(gameControlInstance.CurrentTurn - 5);
+        }
         if (Input.GetKeyDown(KeyCode.L))
         {
-            Debug.Log(KeyCode.L);
-            gameControlInstance.ChangeTurn(gameControlInstance.CurrentTurn - 5);
+            Debug.Log("L");
+            gameControlInstance.ChangeTurn(gameControlInstance.CurrentTurn + 5);
         }
         if (Input.GetKeyDown(KeyCode.O))
         {
-            Debug.Log(KeyCode.O);
+            Debug.Log("O");
             multiplySpeed((float)0.8);
         }
         if (Input.GetKeyDown(KeyCode.P))
         {
-            Debug.Log(KeyCode.P);
+            Debug.Log("P");
             multiplySpeed((float)1.25);
         }
     }
