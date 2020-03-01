@@ -159,6 +159,7 @@ public class GameControl : MonoBehaviour
                 }
             }
         }
+        //TODO 这里改成异步
         AfterNextTurnEvent?.Invoke();
     }
 
