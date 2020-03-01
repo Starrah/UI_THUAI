@@ -94,7 +94,7 @@ public class GameControl : MonoBehaviour
     
     private void gameEnd()
     {
-        //TODO    
+            
     }
 
     public event Action AfterNextTurnEvent;
@@ -106,6 +106,7 @@ public class GameControl : MonoBehaviour
      */
     public IEnumerator NextTurn()
     {
+        //long startTime = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
         CurrentTurn++;
         if (CurrentTurn >= DataSource.GetStartData().ActualRoundNum)
         {
@@ -114,6 +115,7 @@ public class GameControl : MonoBehaviour
         }
         var turnData = DataSource.GetTurnData(CurrentTurn);
         Debug.Log("Turn " + CurrentTurn + ", Speed " + PlaySpeed + ", Interval " + _standardTimePerTurn / PlaySpeed);
+        //long t1 = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
         foreach (GameEventBase eventBase in turnData.Events)
         {
             if (eventBase is NewBidEvent || eventBase is BidResultEvent)
@@ -159,9 +161,23 @@ public class GameControl : MonoBehaviour
                 }
             }
         }
-        //TODO 这里改成异步
+        //long t2 = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
         AfterNextTurnEvent?.Invoke();
+        //long t3 = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
+        //Debug.Log("t1 " + (t1 - startTime) + "t2 " + (t2 - startTime) + "t3 " + (t3 - startTime));
     }
+
+    /**
+     * 经测试认为暂时没有把此操作异步的必要，反而造成所有函数被调用时间长达数百毫秒。因此此函数暂不使用。
+     */
+    // private IEnumerator InvokeAfterNextTurnEvent()
+    // {
+    //     foreach (Delegate dele in AfterNextTurnEvent?.GetInvocationList())
+    //     {
+    //         dele.DynamicInvoke();
+    //         yield return null;
+    //     }
+    // }
 
     private void ChangeAPlace(MapPlace mapPlace)
     {

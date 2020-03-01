@@ -99,7 +99,7 @@ public class PlayerManager : MonoBehaviour
     // change current turn when the speedSlider "OnValueChanged"
     public void slideTurn(float turn)
     {
-        gameControlInstance.ChangeTurn((int)turn);
+        if(!_standardUpdateTurn) gameControlInstance.ChangeTurn((int)turn);
     }
 
     // generate event message and then send to updateMessage
@@ -192,6 +192,8 @@ public class PlayerManager : MonoBehaviour
         
     }
 
+    private bool _standardUpdateTurn = false;
+    
     private void Update()
     {
         curPlaySpeed = gameControlInstance.PlaySpeed;
@@ -199,7 +201,16 @@ public class PlayerManager : MonoBehaviour
         speedSlider.value = (curPlaySpeed < 1) ? (curPlaySpeed - 1) * 5 / 4 : (curPlaySpeed - 1) / 4;
 
         currentTurn = gameControlInstance.CurrentTurn;
-        turnSlider.value = currentTurn;
+        try
+        {
+            _standardUpdateTurn = true;
+            turnSlider.value = currentTurn;
+        }
+        finally
+        {
+            _standardUpdateTurn = false;
+        }
+
         turnNumber.text = (gameControlInstance.CurrentTurn+1).ToString();//用户习惯回合从1开始
 
         coinValue = gameControlInstance.GetMoneys();
