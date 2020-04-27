@@ -400,6 +400,15 @@ public class GameControl : MonoBehaviour
                 StartCoroutine(NextTurn());
             _time -= turns * (_standardTimePerTurn / PlaySpeed);
         }
+        if (Input.GetKeyDown(KeyCode.Y))
+        {
+            Debug.Log("Y");
+            MyAi = MyAi == 0 ? 1 : 0;
+            PlayerManager plm = GameObject.Find("PlayerManager").GetComponent<PlayerManager>();
+            plm.flag[MyAi].enabled = true;
+            plm.flag[MyAi == 0 ? 1 : 0].enabled = false;
+            ChangeTurn(CurrentTurn);
+        }
     } 
     
     /**
