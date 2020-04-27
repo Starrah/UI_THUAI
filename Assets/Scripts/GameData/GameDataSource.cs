@@ -154,6 +154,9 @@ namespace GameData
 
                             // 修改地图
                             turnData.Map[x][y].Elements.Add(processor);
+                            turnData.Moneys[turnData.Ai] -=
+                                (_startData.ProcessorRangePrices[Convert.ToInt32(currTurnEvent[3])] +
+                                _startData.PollutionComponentProcessPrices[Convert.ToInt32(currTurnEvent[4])]);
                             break;
                        
                         case 10 : // 成功治理污染源
@@ -207,6 +210,8 @@ namespace GameData
                                 Position = new Point(x, y),
                                 Success = false,
                             };
+
+                            turnData.Moneys[turnData.Ai] -= _startData.TipsterPrice;
                             break;
 
                         case 4: // 运用情报找到的污染源
@@ -244,6 +249,8 @@ namespace GameData
 
                             // 修改地图
                             turnData.Map[x][y].Elements.Add(detector);
+                            turnData.Moneys[turnData.Ai] -=
+                                _startData.DetectorRangePrices[Convert.ToInt32(currTurnEvent[3])];
                             break;
 
                         case 6: // 检测到污染源
