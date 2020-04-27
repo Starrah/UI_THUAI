@@ -107,12 +107,12 @@ public class GameControl : MonoBehaviour
     public IEnumerator NextTurn()
     {
         //long startTime = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
-        CurrentTurn++;
-        if (CurrentTurn >= DataSource.GetStartData().ActualRoundNum)
+        if (CurrentTurn + 1 >= DataSource.GetStartData().ActualRoundNum)
         {
             gameEnd();
             yield break;
         }
+        CurrentTurn++;
         var turnData = DataSource.GetTurnData(CurrentTurn);
         Debug.Log("Turn " + CurrentTurn + ", Speed " + PlaySpeed + ", Interval " + _standardTimePerTurn / PlaySpeed);
         //long t1 = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
